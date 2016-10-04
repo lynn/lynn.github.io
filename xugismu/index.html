@@ -39,7 +39,8 @@ function setup() {
 };
 
 window.onload = function() {
-	score = 0;
+	drani = 0;
+	toldra = 0;
 	setup();
 };
 
@@ -52,8 +53,10 @@ function namcu(x) {
 state = 'guess';
 gbc = function(sel) {
 	if (state !== 'guess') return;
-	score += (sel === ans ? 1 : 0);
-	document.getElementById('score').innerHTML = namcu(score);
+	drani += (sel === ans ? 1 : 0);
+	toldra += (sel !== ans ? 1 : 0);
+	document.getElementById('drani').innerHTML = namcu(drani);
+	document.getElementById('toldra').innerHTML = namcu(toldra);
 	state = 'show';
 	for (var i = 0; i < 4; i++) {
 		document.getElementById('gb' + i).style = 'color:red';
@@ -75,7 +78,8 @@ h1,.sc {
 	font-family: sans-serif;
 }
 .sc { font-size: 20px; margin-bottom: 5px; }
-#score { color: #aa80aa; font-weight: bold; }
+#drani { color: green; font-weight: bold; }
+#toldra { color: red; font-weight: bold; }
 #definition { color: #aaaaaa; }
 table {
 	margin-left:auto; 
@@ -90,7 +94,10 @@ button {
 <body>
 	<div id="container">
 		<h1>ko kli'iki lo fatci gismu</h1>
-		<div class="sc">i nilji'a fa li <span id="score">no</span></div>
+		<div class="sc">
+			i <span id="drani">no</span> drani
+			i <span id="toldra">no</span> toldra
+		</div>
 		<table><tbody>
 			<tr>
 				<td><button id="gb0" type="button" onclick="gbc(0)"></button></td>
