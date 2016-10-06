@@ -1,0 +1,65 @@
+@import 'https://fonts.googleapis.com/css?family=Roboto+Slab:400,700|Open+Sans:800';
+
+body {
+  margin: 0;
+  font-family: 'Roboto Slab', serif;
+  font-weight: 400;
+  color: rgba(0,0,0,0.8);
+}
+
+header, footer {
+  text-align: center;
+}
+
+div.lang-bar {
+  background-color: rgba(69,103,137,0.15);
+  padding: 5px;
+}
+
+h1, footer {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 800;
+  font-size: 48pt;
+}
+
+p.subtitle {
+  font-size: 24pt;
+  margin-top: -40px;
+}
+
+article {
+  margin-left: auto;
+  margin-right: auto;
+  width: 600px;
+  font-size: 14pt;
+}
+
+.dim, .niho, a {
+  color: rgba(69,103,137,0.7);
+}
+
+a {
+  font-weight: 700;
+}
+
+.sentence {
+  margin-top: 4px;
+  position: relative
+}
+
+.niho {
+  width: 40px;
+  text-align: right;
+  margin-left: -50px;
+  position: absolute;
+  left: 0;
+}
+
+pre {
+  font-size: 9pt;
+  background-color: rgba(69,103,137,0.15);
+  margin-top: -20px;
+  margin-bottom: 50px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
