@@ -10,12 +10,12 @@ function pick(a) {
 	return a[Math.floor(Math.random() * a.length)];
 }
 
-function fakeGismu() {
+function fakeGismu(omit) {
 	var s = pick([
 		[pick(initClusters), pick(vowels), pick(consonants), pick(vowels)].join(''),
 		[pick(consonants), pick(vowels), pick(midClusters), pick(vowels)].join(''),
 	]);
-	return gismu[s] ? fakeGismu() : s;
+	return gismu[s] || omit.indexOf(s) > -1 ? fakeGismu() : s;
 }
 
 function realGismu() {
@@ -23,9 +23,11 @@ function realGismu() {
 }
 
 function setup() {
+	var omit = [];
 	for (var i = 0; i < 4; i++) {
 		var e = document.getElementById('gb' + i);
-		e.innerHTML = fakeGismu();
+		e.innerHTML = fakeGismu(omit);
+		omit.push(e.innerHTML);
 		e.style = '';
 	}
 	ans = Math.floor(Math.random()*4);
