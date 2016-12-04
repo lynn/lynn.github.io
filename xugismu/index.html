@@ -15,7 +15,7 @@ function fakeGismu(omit) {
 		[pick(initClusters), pick(vowels), pick(consonants), pick(vowels)].join(''),
 		[pick(consonants), pick(vowels), pick(midClusters), pick(vowels)].join(''),
 	]);
-	return gismu[s] || omit.indexOf(s) > -1 ? fakeGismu() : s;
+	return gismu[s] || omit.indexOf(s) > -1 ? fakeGismu(omit) : s;
 }
 
 function realGismu() {
