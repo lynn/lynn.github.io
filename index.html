@@ -1,26 +1,52 @@
 <!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Catamorphism Cabin</title>
-<style type="text/css">
-body {
-  margin:40px auto;
-  max-width: 650px;
-  line-height: 1.6;
-  font-size: 18px;
-  color: #444;
-  padding:0 10px;
-}
-h1, h2, h3 { line-height:1.2; }
-</style></head>
-<body>
-<header>
-<h1>Catamorphism Cabin</h1>
-</header>
-<p>
-I’m Lynn!!! I make chords and jokes and programs, hi. I don’t really know what to put here.
-</p>
-<p>
-You can <a href="//ko-fi.com/lynnlake">buy me a coffee</a> if you like what I do. ♥
-</p>
-</body></html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Catamorphism Cabin
+    </title>
+    <style type="text/css">
+      body {
+        margin: 80px auto;
+        max-width: 650px;
+        line-height: 1.6;
+        font-family: 'Droid Sans', 'DejaVu Sans', 'Tahoma', 'Verdana', sans-serif;
+        font-size: 24px;
+        color: #444;
+        opacity: 1;
+        transition: 1.5s;
+      }
+      .fade {
+        opacity: 0;
+        transform: translate(0px, 20px);
+        transition: none;
+      }
+      a {
+        color: #c66;
+      }
+      h1, h2, h3 {
+        line-height:1.2;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="text/javascript">
+      document.body.className += ' fade';
+      window.onload = function() { document.body.className = ''; }
+    </script>
+    <header>
+      <h1>Catamorphism Cabin</h1>
+    </header>
+    <p>
+      I’m Lynn!!! I make
+      <a href="https://www.periscope.tv/0xlynn">chords</a> and
+      <a href="https://twitter.com/chordbug">jokes</a> and
+      <a href="https://github.com/lynn">programs</a>, hi.
+      I don’t really know what to put here.
+    </p>
+    <ul>
+      <li>You can <a href="https://ko-fi.com/lynnlake">buy me a coffee</a> if you like what I do. ♥</li>
+      <li>You can <a href="https://curiouscat.me/0xlynn">ask me questions</a>, too!</li>
+    </ul>
+  </body>
+</html>
