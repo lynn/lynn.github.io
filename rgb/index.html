@@ -62,10 +62,9 @@ function load_render() {
     // t = time; ir = red image; ig = green image; ib = blue image
     var p = Math.PI * 2.0 / 3.0;
     var d = Math.abs(Math.sin(t)) * 5.0;
-    // ctx.fillStyle = '#000';
+    t *= 9;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.globalCompositeOperation = 'lighter';
-    t *= 9;
     ctx.drawImage(ir, Math.cos(t + 0*p) * d, Math.sin(t + 0*p) * d/2);
     ctx.drawImage(ig, Math.cos(t + 1*p) * d, Math.sin(t + 1*p) * d/3);
     ctx.drawImage(ib, Math.cos(t + 2*p) * d, Math.sin(t + 2*p) * d);</textarea>
