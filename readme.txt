@@ -12,7 +12,7 @@ serious! But ##lynn is not your doom-posting/sadness-dumping Twitter account.
 ====
 
 3. I really, really don't like hearing about drugs and diseases and pathology
-and stimulants, etc., sorry. It's a very troublesome topic to me.
+and chemicals, etc., sorry. It's a troublesome topic to me.
 
 I know a lot of people here like discussing this topic extensively, and of
 course it comes up a lot naturally in our social circle. If it does, please
@@ -22,3 +22,9 @@ consider moving the conversation over to ##edef, which I hear is a bit like
 Consider this a very light rule! I obviously won't mind if you idly chat about
 hormones or meds you take in here. Just be aware that ##edef exists, for
 heavier pharma nerd talk that may arise.
+
+====
+
+Disobeying these guidelines doesn't make you a bad person -- it will only get
+you reminded of them. I'm simply aiming to describe what this place is about.
+Please don't stress yourself out trying to obey a text file perfectly!! ♥
