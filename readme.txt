@@ -7,7 +7,11 @@ serious! But ##lynn is not your doom-posting/sadness-dumping Twitter account.
 
 ====
 
-2. I really, really don't like hearing about drugs and diseases and pathology
+2. NSFW links and convos go in our sister channel ##horney. XgF runs it.
+
+====
+
+3. I really, really don't like hearing about drugs and diseases and pathology
 and stimulants, etc., sorry. It's a very troublesome topic to me.
 
 I know a lot of people here like discussing this topic extensively, and of
@@ -16,4 +20,5 @@ consider moving the conversation over to ##edef, which I hear is a bit like
 ##lynn but with more syringes.
 
 Consider this a very light rule! I obviously won't mind if you idly chat about
-hormones in here. Just be aware that ##edef exists, for heavier pharma nerd talk.
+hormones or meds you take in here. Just be aware that ##edef exists, for
+heavier pharma nerd talk that may arise.
