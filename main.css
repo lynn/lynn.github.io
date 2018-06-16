@@ -1,4 +1,4 @@
-// Style for the whole page.
+/* Style for the whole page. */
 body {
   margin: 40px auto;
   padding: 20px;
@@ -11,19 +11,19 @@ body {
   transition: 1.5s opacity transform;
 }
 
-// Fix font size on tiny screens.
+/* Fix font size on tiny screens. */
 @media only screen and (max-width: 650px) {
   body { font-size: 14px; }
 }
 
-// To fade in smoothly upon loading the page (but only if JavaScript is enabled):
-//
-//   document.body.className += ' fade';
-//   window.onload = function() { document.body.className = ''; }
-//
+/* To fade in smoothly upon loading the page (but only if JavaScript is enabled):
+
+    document.body.className += ' fade';
+    window.onload = function() { document.body.className = ''; }
+*/
 .fade { opacity: 0; transform: translate(0px, 20px); transition: none; }
 
-// Some more fix-ups:
+/* Some more fix-ups: */
 a { color: #e08010; text-decoration: none; }
 a:hover { color: #f09020; }
 h1, h2, h3 { line-height:1.2; }
