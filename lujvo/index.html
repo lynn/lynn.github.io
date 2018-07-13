@@ -3,11 +3,12 @@
   <head>
     <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
     <script type="text/javascript" src="Lujvo.js"></script>
+    <style type="text/css">body{margin:60px;font-family:sans-serif;}</style>
   </head>
   <body>
     <h1>la jvoxaskei ♥</h1>
     <form action="#" id="form_field">
-      <input type="text" id="tanru" value="" onKeyUp="document.getElementById('lujvo').innerHTML=this.value && Strict.Lujvo.bestLujvoWords(this.value)">
+      <input autofocus type="text" id="tanru" value="" placeholder="lujvo zbasu" onKeyUp="document.getElementById('lujvo').innerHTML=this.value && Strict.Lujvo.bestLujvoWords(this.value)">
       <span id="lujvo"></span>
     </form>
   </body>
