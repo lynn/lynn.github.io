@@ -1,0 +1,56 @@
+<html>
+<audio id="c" controls>
+  <source src="cowbell.ogg" type="audio/ogg">
+  <source src="cowbell.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio><br>
+<style type="text/css">
+span { font-family: 'Courier New', monospace; }
+.yellow { color: #ffd020; font-weight: bold; }
+</style>
+<span>cowbell score</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="yellow"><span id="sc">0</span><span> points</span></span>
+
+<script type="text/javascript">
+var c = null;
+window.onload = function() {
+  c = document.getElementById('c');
+  sc = document.getElementById('sc');
+  c.loop = true;
+  setInterval(cowbells, 33);
+}
+
+//  high = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+//  low = [16, 17, 18, 19, 20, 21, 22, 23] 
+ 
+seen = 0;
+score = 0;
+function between(a, b, c) { return c >= a && c < b; }
+
+cowbells = function() {
+  var now = c.currentTime;
+  if (between(seen, now, 2.093023)) score += 25;
+  if (between(seen, now, 2.790698)) score += 25;
+  if (between(seen, now, 3.488372)) score += 25;
+  if (between(seen, now, 4.186047)) score += 25;
+  if (between(seen, now, 4.883721)) score += 25;
+  if (between(seen, now, 5.581395)) score += 25;
+  if (between(seen, now, 6.279070)) score += 25;
+  if (between(seen, now, 6.976744)) score += 25;
+  if (between(seen, now, 7.674419)) score += 25;
+  if (between(seen, now, 8.372093)) score += 25;
+  if (between(seen, now, 10.465116)) score += 1111111;
+  if (between(seen, now, 11.162791)) score += 1111111;
+  if (between(seen, now, 11.860465)) score += 1111111;
+  if (between(seen, now, 12.558140)) score += 1111111;
+  if (between(seen, now, 13.255814)) score += 1111111;
+  if (between(seen, now, 13.953488)) score += 1111111;
+  if (between(seen, now, 14.651163)) score += 1111111;
+  if (between(seen, now, 15.348837)) score += 1111111;
+  if (now > 16.67) c.currentTime = now = 0;
+ 
+  sc.innerHTML = score;
+  seen = now;
+}
+
+</script>
