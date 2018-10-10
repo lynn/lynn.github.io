@@ -27,4 +27,4 @@ body {
 a { color: #e08010; text-decoration: none; }
 a:hover { color: #f09020; }
 h1, h2, h3 { line-height:1.2; }
-span[title] { border-bottom: 2px dashed #444; }
+span[title] { border-bottom: 0.15em dashed #ccc; }
