@@ -11,13 +11,13 @@ serious! But ##lynn is not your doom-posting/sadness-dumping Twitter account.
 
 ====
 
-3. I really, really don't like hearing about drugs and diseases and pathology
+3. I don't like hearing about chemistry and drugs and diseases and pathology
 and chemicals, etc., sorry. It's a troublesome topic to me.
 
 I know a lot of people here like discussing this topic extensively, and of
 course it comes up a lot naturally in our social circle. If it does, please
 consider moving the conversation over to ##edef, which I hear is a bit like
-##lynn but with more syringes.
+##lynn but with more syringes. Many folks who idle here idle there too.
 
 Consider this a very light rule! I obviously won't mind if you idly chat about
 hormones or meds you take in here. Just be aware that ##edef exists, for
