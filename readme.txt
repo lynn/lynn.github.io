@@ -11,7 +11,7 @@ serious! But ##lynn is not your doom-posting/sadness-dumping Twitter account.
 
 ====
 
-3. I don't like hearing about chemistry and drugs and diseases and pathology
+3. I don't like hearing about drugs and diseases and pathology
 and chemicals, etc., sorry. It's a troublesome topic to me.
 
 I know a lot of people here like discussing this topic extensively, and of
