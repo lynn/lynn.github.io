@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+  <title>fruit</title>
+  <style>
+    .segment { position: fixed; top: 50%; left: 50% }
+    img { width: 50px; }
+  </style>
+  <script type="text/javascript">
+
+
+function curve(t) {
+  return [Math.sin(t * 2.9), Math.sin(t * 5.1), Math.sin(t * 7)]
+}
+
+function step(time) {
+  let segs = document.getElementsByClassName("segment");
+  for (let i = 0; i < segs.length; i++) {
+    let seg = segs[i];
+    let [x,y,z] = curve(time / 2000 + i / 9);
+    seg.style.transform = `scale(${5/(4-z)}) translate3d(${x*5}em,${y*5}em,${z*5}em)`
+    seg.style.zIndex = Math.floor(z*1000)
+  }
+  window.requestAnimationFrame(step)
+}
+
+window.onload = step
+
+
+  </script>
+</head>
+<body>
+  <div class="segment"><img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/google/40/green-apple_1f34f.png"></div>
+  <div class="segment"><img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/google/40/mushroom_1f344.png"></div>
+  <div class="segment"><img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/google/40/aubergine_1f346.png"></div>
+  <div class="segment"><img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/google/40/lemon_1f34b.png"></div>
+  <div class="segment"><img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/google/40/watermelon_1f349.png"></div>
+</body>
+</html>
