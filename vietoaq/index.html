@@ -1,0 +1,108 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Vietoaq quizzer</title>
+    <style>
+        html { background-color: #25253a; color: #fdfdd4; }
+        html, input { font-family: serif !important; font-size: 150%; text-align: center; }
+        input { border: 0; background-color: #bbb; }
+        table { margin-left: auto; margin-right: auto; font-weight: bold; font-size: 24px; border-spacing: 0; }
+        td { padding: 2px 6px; margin: 0; background-color:#4c4c8d; font-family: monospace; }
+        td+td { background-color: #41416b }
+        #prompt { font-size: 350%; }
+        #correct { color: #38b638; }
+        #wrong { color: #ce1f70; }
+        #hint { color: #0c8d8d; }
+        tbody { display: flex; flex-direction: row; }
+        tr { display: flex; flex-direction: column; }
+    </style>
+    <script>
+
+const grave = '\u0300'
+const acute = '\u0301'
+const circumflex = '\u0302'
+const tilde = '\u0303'
+const macron = '\u0304'
+const hook = '\u0309'
+const caron = '\u030c'
+const heads = 'm n p b t d k g c ch j f s sh h r l'.split(' ')
+const ends = `a u i o e aq ai ao uq ua ui uo ue iq ia io ie oq oa oi oe eq ea eu ei eo uaq uai uao uoq ueq iaq iai iao ioq ieq oaq eaq eoq aq uq iq eq oq`.split(' ')
+
+function randi(n) { return Math.floor(Math.random() * n) }
+function pick(arr) { return arr[randi(arr.length)] }
+function randSyl() { return pick(heads) + pick(ends) }
+function randTone() { return randi(7) + 1 } // exclude neutral tone
+function dia(tone) { return [0, macron, acute, caron, hook, circumflex, grave, tilde, ''][tone] }
+function fixi(syl) { return syl.replace(/i/g, 'ı') }
+function sylDia(syl, tone) { return fixi(syl).replace(/[auıoe]/, v => v + dia(tone)) }
+function sylVie(syl, tone) { return syl.replace(/q?$/, q => '--rlpbxznmtdkgfv q'[2*tone+!!q]).trim() }
+
+window.onload = () => {
+    const prompt = document.getElementById('prompt')
+    const help = document.getElementById('help')
+    const input = document.getElementsByTagName('input')[0]
+    let answer
+
+    function newPrompt() {
+        const syl = randSyl()
+        const tone = randTone()
+        prompt.innerText = sylDia(syl, tone)
+        answer = sylVie(syl, tone)
+        input.value = ''
+    }
+
+    function submit() {
+        const ok = input.value === answer
+        document.getElementById(ok ? 'correct' : 'wrong').innerText -= -1
+        document.getElementById('hint').innerHTML = ok ? '&nbsp;' : ` (was <code>${answer}</code>)`
+        newPrompt()
+    }
+
+    function table() {
+        const tbl = document.createElement('table')
+        const tr = tbl.insertRow()
+        const cell = x => tr.insertCell().appendChild(document.createTextNode(x))
+        cell('o'); cell('\xa0'); cell('q')
+
+        for (let i = 1; i <= 7; i++) {
+            const tr = tbl.insertRow()
+            const cell = x => tr.insertCell().appendChild(document.createTextNode(x))
+            cell(`o${dia(i)}`)
+            cell(sylVie('', i))
+            cell(sylVie('q', i))
+        }
+        return tbl
+    }
+
+    input.addEventListener('keydown', e => {
+        if (e.keyCode === 13) { e.preventDefault(); submit() }
+    })
+
+    document.querySelector('label input').addEventListener('change', e => {
+        e.target.checked ? help.appendChild(table()) : help.removeChild(help.firstChild)
+    })
+
+    newPrompt()
+}
+
+</script>
+</head>
+<body>
+    <h2 id="prompt"></h2>
+    <input autofocus type="text" placeholder="vietoaq">
+    <div>
+        <span id="correct">0</span> correct,
+        <span id="wrong">0</span> wrong
+        <br>
+        <span id="hint">&nbsp;</span>
+    </div>
+    <br>
+    <label>
+        <input type="checkbox" name="show">
+        show table
+    </label>
+    <div id="help"></div>
+</body>
+</html>
