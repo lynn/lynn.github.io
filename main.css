@@ -7,8 +7,6 @@ body {
   font-family: 'Droid Sans', 'DejaVu Sans', 'Tahoma', 'Verdana', sans-serif;
   font-size: 24px;
   color: #444;
-  opacity: 1;
-  transition: 1.5s opacity transform;
 }
 
 /* Fix font size on tiny screens. */
@@ -16,15 +14,27 @@ body {
   body { font-size: 14px; }
 }
 
-/* To fade in smoothly upon loading the page (but only if JavaScript is enabled):
+/* Alternatives seen by screen readers and computers only. */
+.visually-hidden {
+  position: absolute;
+  font-size: 0;
+  width: 0;
+  height: 0;
+  left: -99999px;
+}
 
-    document.body.className += ' fade';
-    window.onload = function() { document.body.className = ''; }
-*/
-.fade { opacity: 0; transform: translate(0px, 20px); transition: none; }
-
-/* Some more fix-ups: */
+/* Some niceties: */
 a { color: #e08010; text-decoration: none; }
 a:hover { color: #f09020; }
-h1, h2, h3 { line-height:1.2; }
-span[title] { border-bottom: 0.15em dashed #ccc; }
+cite { font-style: normal; }
+h1, h2, h3 { line-height: 1.2; }
+.pointers { padding-left: 1em; }
+.pointers > p { display: list-item; }
+
+/* Definitions */
+dfn { font-style: normal; font-weight: bold; }
+aside.definitions { font-size: 14px; opacity: 0.7; text-align: right; }
+aside.definitions dt { display: inline; }
+aside.definitions dt::before { content: "\A"; white-space: pre-wrap; }
+aside.definitions dt::after { content: ": "; }
+aside.definitions dd { display: inline; margin-inline-start: 0; }
