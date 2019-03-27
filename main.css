@@ -35,6 +35,6 @@ h1, h2, h3 { line-height: 1.2; }
 dfn { font-style: normal; font-weight: bold; }
 aside.definitions { font-size: 14px; opacity: 0.7; text-align: right; }
 aside.definitions dt { display: inline; }
-aside.definitions dt::before { content: "\A"; white-space: pre-wrap; }
+aside.definitions dt ~ dt::before { content: "\A"; white-space: pre-wrap; }
 aside.definitions dt::after { content: ": "; }
 aside.definitions dd { display: inline; margin-inline-start: 0; margin: 0; }
