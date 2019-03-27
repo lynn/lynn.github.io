@@ -37,4 +37,4 @@ aside.definitions { font-size: 14px; opacity: 0.7; text-align: right; }
 aside.definitions dt { display: inline; }
 aside.definitions dt::before { content: "\A"; white-space: pre-wrap; }
 aside.definitions dt::after { content: ": "; }
-aside.definitions dd { display: inline; margin-inline-start: 0; }
+aside.definitions dd { display: inline; margin-inline-start: 0; margin: 0; }
