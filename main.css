@@ -38,3 +38,7 @@ aside.definitions dt { display: inline; }
 aside.definitions dt ~ dt::before { content: "\A"; white-space: pre-wrap; }
 aside.definitions dt::after { content: ": "; }
 aside.definitions dd { display: inline; margin-inline-start: 0; margin: 0; }
+
+/* Rule above definitions list */
+aside.definitions dl { margin-top: 50px; position: relative; }
+aside.definitions dl:before { width: 75%; height: 1px; content: ""; background-color: #444; position: absolute; right: 0; top: -5px; }
