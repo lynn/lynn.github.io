@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Confusable HTML tags</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        code {
+            color: #000088;
+        }
+
+        body {
+            width: 800px;
+            margin: auto;
+            font-family: sans-serif;
+            line-height: 1.4;
+        }
+
+        header {
+            text-align: center;
+        }
+
+        h1 {
+            font-family: serif;
+        }
+
+        h1+p {
+            font-style: italic;
+            margin-top: -1em;
+        }
+
+        table#tag-summary {
+            border-spacing: 0 20px;
+        }
+
+        table#tag-summary th {
+            border-bottom: 2px solid black;
+        }
+
+        table#tag-summary td {
+            padding: 5px 20px;
+        }
+
+        table#tag-summary td.tag-name {
+            width: 80px;
+            text-align: center;
+            background: #ddddff;
+        }
+
+        table#tag-summary td.tag-usecase {
+            width: 240px;
+            font-size: 80%;
+        }
+
+        table#tag-summary td.tag-codesample {
+            width: 240px;
+            font-size: 80%;
+        }
+
+        table#tag-summary td.tag-output {
+            width: 240px;
+            font-size: 90%;
+            background: #ffdddd;
+        }
+
+        mark {
+            background: #ff8888;
+            box-shadow: 1px 1px 0 0  #dd4444;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Summary of some confusable HTML tags</h1>
+        <p>(namely, the ones that mark up inline text in a bunch of ways)</p>
+    </header>
+    <main>
+        <table id="tag-summary">
+            <tr>
+                <th>Tag name</th>
+                <th>Use case</th>
+                <th>Code sample</th>
+                <th>Output</th>
+            </tr>
+            <tr>
+                <td class="tag-name"><code>b</code></td>
+                <td class="tag-usecase">Draw attention to words without conveying extra importance.</td>
+                <td class="tag-codesample">
+                    <code>A &lt;b&gt;golden yo-yo&lt;/b&gt; rests on the &lt;b&gt;trophy case&lt;/b&gt;.</code></td>
+                <td class="tag-output"> A <b>golden yo-yo</b> rests on the <b>trophy case</b>. </td>
+            </tr>
+            <tr>
+                <td class="tag-name"><code>strong</code></td>
+                <td class="tag-usecase">Importance, seriousness, urgency.</td>
+                <td class="tag-codesample"><code>&lt;strong&gt;Warning: contains live bees.&lt;/strong&gt;</code></td>
+                <td class="tag-output"><strong>Warning: contains live bees.</strong></td>
+            </tr>
+            <tr>
+                <td class="tag-name"><code>i</code></td>
+                <td class="tag-usecase">An alternate voice or mood; a different quality of text, such as a technical
+                    term, a transliteration, a thought, a ship name…</td>
+                <td class="tag-codesample">
+                    <code>I'm allergic to cats (&lt;i&gt;Felis catus&lt;/i&gt;)… Well, &lt;i&gt;c'est la vie&lt;/i&gt;.</code>
+                </td>
+                <td class="tag-output">I'm allergic to cats (<i>Felis catus</i>)… Well, <i>c'est la vie</i>.</td>
+            </tr>
+            <tr>
+                <td class="tag-name"><code>em</code></td>
+                <td class="tag-usecase">Contrastive stress emphasis, as in spoken language.</td>
+                <td class="tag-codesample"><code>I didn't say &lt;em&gt;she&lt;/em&gt; stole my Etruscan boar vessel.</code></td>
+                <td class="tag-output">I didn't say <em>she</em> stole my Etruscan boar vessel.</td>
+            </tr>
+            <tr>
+                <td class="tag-name"><code>cite</code></td>
+                <td class="tag-usecase">The title of a work</td>
+                <td class="tag-codesample"><code>Haven't you read &lt;cite&gt;Infinite Jest&lt;/cite&gt;?&lt;br&gt;…Yeah, me neither.</code></td>
+                <td class="tag-output">Haven't you <cite>Infinite Jest</cite>?<br>…Yeah, me neither.</td>
+            </tr>
+            <tr>
+                <td class="tag-name"><code>s</code></td>
+                <td class="tag-usecase">Content that is no longer accurate or relevant.</td>
+                <td class="tag-codesample"><code>&lt;s&gt;Price: $19.99.&lt;/s&gt; Now only $29.99!</code></td>
+                <td class="tag-output"><s>Price: $19.99.</s> Now only $29.99!</td>
+            </tr>
+            <tr>
+                <td class="tag-name"><code>del</code></td>
+                <td class="tag-usecase">A deletion to a document.</td>
+                <td class="tag-codesample">
+                    <code>Telekinesis is &lt;del&gt;cool&lt;/del&gt; &lt;ins&gt;cute&lt;/ins&gt;. &lt;button&gt;Save this edit&lt;/button&gt;</code>
+                </td>
+                <td class="tag-output">Telekinesis is <del>cool</del> <ins>cute</ins>. <button>Save this edit</button>
+                </td>
+            </tr>
+            <tr>
+                <td class="tag-name"><code>u</code></td>
+                <td class="tag-usecase">Other unarticulated annotation. (Example: of a grammar construct.)</td>
+                <td class="tag-codesample">
+                    <code>Ana reported &lt;u&gt;who was at the party&lt;/u&gt; and &lt;u&gt;how long they stayed&lt;/u&gt;.</code>
+                </td>
+                <td class="tag-output">Ana reported <u>who was at the party</u> and <u>how long they stayed</u>.</td>
+            </tr>
+            <tr>
+                <td class="tag-name"><code>small</code></td>
+                <td class="tag-usecase">Disclaimers, caveats, semantically fine print.</td>
+                <td class="tag-codesample">
+                    <code>15% off on your next purchase! &lt;small&gt;Coupons cannot be stacked (except physically).&lt;/small&gt;</code>
+                </td>
+                <td class="tag-output">15% off on your next purchase! <small>Coupons cannot be stacked (except
+                        physically).</small></td>
+            </tr>
+            <tr>
+                <td class="tag-name"><code>mark</code></td>
+                <td class="tag-usecase">Marked for reference, due to relevance in another context. (Example: search
+                    results.)</td>
+                <td class="tag-codesample">
+                    <code>3 results: eff&lt;mark&gt;ici&lt;/mark&gt;ent, elast&lt;mark&gt;ici&lt;/mark&gt;ty, med&lt;mark&gt;ici&lt;/mark&gt;ne</code>
+                </td>
+                <td class="tag-output">3 results: eff<mark>ici</mark>ent, elast<mark>ici</mark>ty, med<mark>ici</mark>ne
+                </td>
+            </tr>
+        </table>
+    </main>
+</body>
+
+</html>
