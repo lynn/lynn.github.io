@@ -30,6 +30,7 @@ cite { font-style: normal; }
 h1, h2, h3 { line-height: 1.2; }
 .pointers { padding-left: 1em; }
 .pointers > p { display: list-item; }
+p[lang=ja] { letter-spacing: -0.05em; }
 
 /* Definitions */
 dfn { font-style: normal; font-weight: bold; }
