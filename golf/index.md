@@ -4,12 +4,10 @@ I play [code golf]() (as "lynn") on [golf.shinh.org](http://golf.shinh.org/) and
 I'll do little post-mortem writeups of problems here. Nothing but spoilers here!
 
 ## 2021-03-13 [even 2](http://golf.shinh.org/p.rb?even+2)
-<details>
-
 This is a strange little "map a few short inputs to a few short outputs" kind of challenge.
 
 ### My Python solution
-I tied the shortest Python solution, and found a bunch of one-byte-longer ones:
+I tied the shortest Python solution, after finding a bunch of one-byte-longer ones:
 ```py
 print 2,4,6,1<<input()-5   # 24
 print 2,4,6,input()/8*'8'  # 25
@@ -26,12 +24,9 @@ kops found an amazing [11-byte Vim solution](http://golf.shinh.org/reveal.rb?eve
 For the first test case, it `P`astes nothing, then uses `s` to replace the only character in the input with `2 4 6 `. (Trailing whitespace is trimmed when checking your output.)
 
 For the second test case, it `P`astes the character that `s` copied in the last test case: now the buffer looks like `38`. Then, `s` replaces the `3` with `2 4 6 `, leaving `2 4 6 8`.
-</details>
 
 ## 2021-03-13 [Rotate letters FIXED](http://golf.shinh.org/p.rb?Rotate+letters+FIXED)
-<details>
-  
-Everyone got 62 in Python!
+Everyone got 62 in Python.
 ```py
 import re
 t=re.sub(' (.)','\\1 ',raw_input())
@@ -46,4 +41,3 @@ main=interact$g.(>>=f).words
 ```
 
 The Ruby solution looks sort of magical.
-</detail>
