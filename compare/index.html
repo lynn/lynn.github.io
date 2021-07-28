@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head><title>Safebooru tag comparer</title></head>
+<body style="font-family:sans-serif;">
+    <h1>Safebooru tag comparer</h1>
+    <input type="text" placeholder="hatsune miku">
+    <input type="text" placeholder="aqua hair">
+    <button>Compare!</button>
+    <output style="display:block;margin:1em;white-space:pre"></output>
+</body>
+<script>
+    for (el of document.querySelectorAll("input")) {
+        el.addEventListener("keyup", e => e.key === "Enter" && document.querySelector("button").click());
+    }
+    document.querySelector("button").onclick = async () => {
+        async function count(query) {
+            try {
+                const result = await fetch("https://safebooru.donmai.us/counts/posts.json?tags=" + query);
+                return (await result.json()).counts.posts;
+            } catch {
+                return null;
+            }
+        }
+        function say(msg) {
+            document.querySelector("output").innerText = msg;
+        }
+        function addLink(query) {
+            const url = "https://safebooru.donmai.us/posts?tags=" + query;
+            const a = document.createElement("a");
+            a.href = url;
+            a.innerText = url;
+            document.querySelector("output").appendChild(document.createElement("br"));
+            document.querySelector("output").appendChild(a);
+        }
+        say("...");
+        const tags = [...document.querySelectorAll("input")].map(e => e.value.trim().replace(/\s+/g, "_"));
+        const counts = await Promise.all(tags.map(count));
+        for (const i of [0, 1]) {
+            if (counts[i] === 0) return say(`No posts are tagged ${tags[i]}.`);
+            if (counts[i] === null) return say(`I couldn't calculate how many posts are tagged ${tags[i]}.`);
+        }
+        const total = await count(tags.join(" "));
+        if (total === null) return say(`I couldn't calculate how many posts are tagged both ${tags[0]} (${counts[0]}) and ${tags[1]} (${counts[1]}).`);
+        say([0, 1].map(i => `${(total / counts[i] * 100).toFixed(2)}% of posts tagged “${tags[i]}” are also tagged “${tags[1 - i]}”. (${total} / ${counts[i]})`).join("\n"))
+        tags.map(addLink);
+        addLink(tags.join("+"));
+    }
+</script>
+
+</html>
