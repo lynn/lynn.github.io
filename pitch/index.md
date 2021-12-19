@@ -2,15 +2,13 @@
 
 Japanese is a "mora-timed, pitch-accent language".
 
-Mora are a unit bigger than a phoneme, but smaller than a syllable. Every mora takes the same amount of time to say: a word like にっぽん (Nippon) sounds like two syllables, but instead it's thought of as 4 mora (ni-p-po-n).
-
-Kana _mostly_ correspond to mora one-to-one, except for glides like きゃ, にゅ, しょ, etc. — those are one mora each.
+Mora are like syllables, but smaller. Every mora takes the same amount of time to say: a word like にっぽん (Nippon) sounds like two syllables, but instead it's thought of as 4 mora (ni-p-po-n). Kana _mostly_ correspond to mora one-to-one, except for glides like きゃ, にゅ, しょ, etc. — those are one mora each.
 
 "Pitch accent" means that the pitch of your voice when pronouncing these mora (like "low-high-high-low") may determine the meaning of a word. For example, "kaeru" meaning "frog" is pronounced "low-high-high" (ka-**E**-**RU**), but in the sense of "to go home", it's pronounced "high-low-low" (**KA**-e-ru).
 
-Japanese textbooks have a nasty habit of pretending that this "pitch accent" does not exist. Some respected educators think that it's not worth teaching, for a variety of reasons that I don't think are very good.
+Japanese textbooks have a nasty habit of pretending that this "pitch accent" does not exist. Some respected educators think that it's not worth teaching, for a variety of reasons (that I don't think are very good).
 
-Recently, in online Japanese learning communities, pitch accent has been sort of a "fad" (is it important? should I learn it?) and I think it has the image of being an obscure aspect of the language that only obsessive diehards should spend time on. But I actually think it's a _boring and normal and essential_ aspect of Japanese pronunciation, and its obscurity is undeserved.
+Because of this, pitch accent has been sort of a "fad" in online Japanese learning communities. Is it important? Should I learn it? I think it has the image of being an obscure aspect of the language that only obsessive diehards should spend time on. But I actually believe it's a _boring and normal and essential_ aspect of Japanese pronunciation, and its obscurity is undeserved.
 
 So, I want to write everything I know about Japanese pitch accent into this document.
 
@@ -36,4 +34,8 @@ Standard Japanese has only two pitch levels, low and high. Words either have a "
   * For example, 水 mi-**ZU**  →  水を mi-**ZU**-**O**.
 * If the stress is on the **first** mora, this is "head-high type" (atamadaka-gata 頭高型). The pattern is "**HIGH**-low-low-low…" and the following particle is low too.
   * For example, バナナ **BA**-na-na,  バナナを **BA**-na-na-o.
-* If the stress is on a later mora, this is called "middle-high type" (nakadaka-gata 中高型).
+* If the stress is on a **later** mora, this is called "middle-high type" (nakadaka-gata 中高型). The pitch starts low, then is high until the stressed mora, after which there is a drop again.
+  * For example, 株式会社 ka-**BU**-**SHI**-**KI**-**GA**-i-sha. 
+  * A subtype of this is "tail-high type" (odaka-gata 尾高型), where the stress is on the **last** mora.
+   * For example... 妹 i-**MO**-**U**-**TO**. That looks exactly like heiban! But *the following particle is low*: 妹と i-**MO**-**U**-**TO**-to.
+
