@@ -68,7 +68,6 @@ window.onload = () => {
             const in0 = lemma.includes(v);
             const in1 = full.test(defn);
             let i = -1;
-            if (lemma == "sirji") { console.log(lemma, full, defn, in0, in1); }
             if ((i = words.indexOf(lemma)) > -1 || in0 || in1) {
                 if (i > -1) {
                     score = 9999 - i;
@@ -91,8 +90,8 @@ window.onload = () => {
             const dd = document.createElement("dd");
             dd.appendChild(document.createTextNode(e[1][1]));
             dd.innerHTML = dd.innerHTML
-                .replace(/([\$=])(\w+)_\{?(\d+)\}?\$?/g, (_,v,w,d) => `${v === '=' ? '=' : ''}<i>${w}</i><sub>${d}</sub>`)
                 .replace(full, "<mark>$&</mark>")
+                .replace(/([\$=])(\w+)_\{?(\d+)\}?\$?/g, (_,v,w,d) => `${v === '=' ? '=' : ''}<i>${w}</i><sub>${d}</sub>`)
             return [dt, dd];
         }))
     }
