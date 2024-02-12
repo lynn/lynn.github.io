@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <style>
+    h1 { margin-bottom: 0; }
+    button { padding: 0.5em 1em; }
+    table.keyboard { margin: 2em 0; }
+    body { background: #222222; color: #eeeeee; color-scheme: dark; }
+    body { display: flex; flex-direction: column; align-items: center; }
+    body { font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; }
+    table { font-size: 24px; }
+    td.key { text-align: center; width: 1.2em; background: #555; border-radius: 2px; }
+    td.key[data-lit=true] { background: #22eedd; color: black; }
+    tr.spacer { height: 0.5em; }
+    td.key[name=key9] { width: 1.5em; }
+  </style>
+  <script>
+    const filters = [{ usagePage: 0xff50, usage: 0x4c56 }];
+    var device = null;
+    function oninputreport(report) {
+      for (let i = 0; i < 23; i++) {
+        const byte = report.data.getUint8(i >> 3);
+        const bit = ((128 >> (i & 7)) & byte) !== 0;
+        document.getElementsByName("key" + i).forEach(e => e.dataset.lit = bit ? "true" : undefined)
+      }
+    }
+    async function connect(button) {
+      button.blur();
+      if (device) { device.oninputreport = undefined; await device.close(); }
+      device = (await navigator.hid.requestDevice({ filters }))[0];
+      if (device) { await device.open(); device.oninputreport = oninputreport; }
+    }
+    function showBoard(layout) {
+      document.querySelectorAll('table').forEach(e => e.style.display = 'none');
+      document.querySelector('table.' + layout).style.display = 'block';
+    }
+  </script>
+  <body>
+    <h1>Plover HID display</h1>
+    <div class="controls">
+      <button onclick="connect(this)">Connect</button>
+      <select onchange="showBoard(this.value)">
+        <option value="num-s"># on S1</option>
+        <option value="num-top">Number bar</option>
+      </select>
+    </div>
+    <table class="keyboard num-s">
+      <tr class="keyrow">
+        <td class="key" name="key22">#</td>
+        <td class="key" name="key1">T</td>
+        <td class="key" name="key3">P</td>
+        <td class="key" name="key5">H</td>
+        <td class="key" name="key9" rowspan="2">*</td>
+        <td class="key" name="key12">F</td>
+        <td class="key" name="key14">P</td>
+        <td class="key" name="key16">L</td>
+        <td class="key" name="key18">T</td>
+        <td class="key" name="key20">D</td>
+      </tr>
+      <tr class="keyrow">
+        <td class="key" name="key0">S</td>
+        <td class="key" name="key2">K</td>
+        <td class="key" name="key4">W</td>
+        <td class="key" name="key6">R</td>
+        <td class="key" name="key13">R</td>
+        <td class="key" name="key15">B</td>
+        <td class="key" name="key17">G</td>
+        <td class="key" name="key19">S</td>
+        <td class="key" name="key21">Z</td>
+      </tr>
+      <tr class="spacer"></tr>
+      <tr class="keyrow">
+        <td class="spacer" colspan="2">&nbsp;</td>
+        <td class="key" name="key7">A</td>
+        <td class="key" name="key8">O</td>
+        <td class="spacer">&nbsp;</td>
+        <td class="key" name="key10">E</td>
+        <td class="key" name="key11">U</td>
+        <td class="spacer" colspan="2">&nbsp;</td>
+      </tr>
+    </table>
+    <table style="display:none;" class="keyboard num-top">
+      <tr class="keyrow">
+        <td class="key" name="key22" colspan="10">#</td>
+      </tr>
+      <tr class="keyrow">
+        <td class="key" name="key0" rowspan="2">S</td>
+        <td class="key" name="key1">T</td>
+        <td class="key" name="key3">P</td>
+        <td class="key" name="key5">H</td>
+        <td class="key" name="key9" rowspan="2">*</td>
+        <td class="key" name="key12">F</td>
+        <td class="key" name="key14">P</td>
+        <td class="key" name="key16">L</td>
+        <td class="key" name="key18">T</td>
+        <td class="key" name="key20">D</td>
+      </tr>
+      <tr class="keyrow">
+        <td class="key" name="key2">K</td>
+        <td class="key" name="key4">W</td>
+        <td class="key" name="key6">R</td>
+        <td class="key" name="key13">R</td>
+        <td class="key" name="key15">B</td>
+        <td class="key" name="key17">G</td>
+        <td class="key" name="key19">S</td>
+        <td class="key" name="key21">Z</td>
+      </tr>
+      <tr class="spacer"></tr>
+      <tr class="keyrow">
+        <td class="spacer" colspan="2">&nbsp;</td>
+        <td class="key" name="key7">A</td>
+        <td class="key" name="key8">O</td>
+        <td class="spacer">&nbsp;</td>
+        <td class="key" name="key10">E</td>
+        <td class="key" name="key11">U</td>
+        <td class="spacer" colspan="2">&nbsp;</td>
+      </tr>
+    </table>
+    <textarea placeholder="You can write text here to try out the display, but it will work in other windows, too." rows="4" cols="40"></textarea>
+  </body>
+</html>
