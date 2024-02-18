@@ -1,70 +1,51 @@
 <!DOCTYPE html>
 <html>
   <style>
-    h1 {
-      margin-bottom: 0;
-    }
-    button {
-      padding: 0.5em 1em;
-    }
-    table.keyboard {
-      margin-top: 2em;
-    }
-    body {
-      background: #222222;
-      color: #eeeeee;
-      color-scheme: dark;
-    }
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    body {
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
-        "Helvetica Neue", sans-serif;
-    }
-    table {
-      font-size: 24px;
-    }
-    td.key {
-      text-align: center;
-      width: 1.2em;
-      background: #555;
-      border-radius: 2px;
-      transition: background 0.1s, color 0.1s;
-    }
-    td.key[data-lit="1"] {
-      background: #44ddaa;
-      color: black;
-      transition: background 0s, color 0s;
-    }
-    td.key[data-lit="2"] {
-      background: #5555dd;
-      transition: background 0.1s, color 0.1s;
-    }
-    tr.spacer {
-      height: 0.5em;
-    }
-    td.key[name="key9"] {
-      width: 1.5em;
-    }
-    output {
-      height: 4em;
-      opacity: 0.5;
-      margin-top: 1em;
-    }
-    output b {
-      color: #6600ff;
-    }
+    h1 { margin-bottom: 0; }
+    button { padding: 0.5em 1em; }
+    table.keyboard { margin-top: 2em; }
+    body { background: #222222; color: #eeeeee; color-scheme: dark; }
+    body { display: flex; flex-direction: column; align-items: center; }
+    body { font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif; }
+    table { font-size: 24px; }
+    td.key { text-align: center; width: 1.2em; background: #555; border-radius: 2px; transition: background 0.1s, color 0.1s; }
+    td.key[data-lit="1"] { background: #44ddaa; color: black; transition: background 0s, color 0s; }
+    td.key[data-lit="2"] { background: #5555dd; transition: background 0.1s, color 0.1s; }
+    tr.spacer { height: 0.5em; }
+    td.key[name="key9"] { width: 1.5em; }
+    output { height: 4em; opacity: 0.5; margin-top: 1em; }
+    output b { color: #6600ff; }
   </style>
   <script>
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const flt = ctx.createBiquadFilter();
+    flt.type = "highshelf";
+    flt.frequency.value = 1200;
+    flt.gain.value = -10;
+    flt.connect(ctx.destination);
+    const oscs = [];
+    function beep(i) {
+      const time = ctx.currentTime;
+      oscs[i] = ctx.createOscillator();
+      oscs[i].type = "triangle";
+      const gain = ctx.createGain();
+      gain.connect(flt);
+      const scale = [0, 2, 4, 7, 9];
+      const st = scale[i % scale.length] + 12 * Math.floor(i / scale.length) - 7
+      oscs[i].frequency.setValueAtTime(220 * Math.pow(2, st / 12), time);
+      oscs[i].detune.setValueAtTime(Math.random() * 30 - 15, time);
+      oscs[i].connect(gain);
+      oscs[i].start(time);
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.setValueAtTime(0.1, ctx.currentTime + 0.06);
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.08);
+      oscs[i].stop(time + 0.09);
+    }
+
     const ploverHid = { usagePage: 0xff50, usage: 0x4c56 };
     let device = null;
     let alphabet = "STKPWHRAO*EUFRPBLGTSDZ#";
-    let last = 0,
-      memory = {};
+    let last = 0, memory = {};
     function oninputreport(report) {
       const bits = report.data.getUint32(0);
       if (bits && !last) memory = {};
@@ -72,7 +53,11 @@
       let vowel = false;
       for (let i = 0; i < 23; i++) {
         const bit = (bits >> (31 - i)) & 1;
-        if (bit) memory[i] = 1;
+        const lastBit = (last >> (31 - i)) & 1;
+        if (bit && !lastBit) {
+          if (document.getElementById("enable-audio").checked) beep(i);
+          memory[i] = 1;
+        }
         document.getElementsByName("key" + i).forEach((e) => {
           e.dataset.lit = bit ? 1 : memory[i] ? 2 : 0;
         });
@@ -82,8 +67,8 @@
           vowel ||= i >= 7 && i <= 11;
         }
       }
-      if (!bits) document.getElementById("steno").innerText = steno;
       if (false) {
+        if (!bits) document.getElementById("steno").innerText = steno;
         document.getElementById("steno").innerHTML = pseudo(
           document.getElementById("steno").innerText
         );
@@ -111,9 +96,7 @@
       const devices = await navigator.hid.getDevices();
       for (const device of devices) {
         for (const c of device.collections) {
-          console.log(c);
           if (c.usage === ploverHid.usage && c.usagePage === ploverHid.usagePage) {
-            console.log("yay")
             await device.open();
             device.oninputreport = oninputreport;
             break;
@@ -130,6 +113,7 @@
         <option value="num-s"># on S1</option>
         <option value="num-top">Number bar</option>
       </select>
+      <input id="enable-audio" type="checkbox"><label for="enable-audio">Enable audio</label></input>
     </div>
     <table class="keyboard num-s">
       <tr class="keyrow">
