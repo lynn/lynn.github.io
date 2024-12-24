@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>VRT Connections</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+	<style>
+		@font-face {
+			font-family: Roobert;
+			font-weight: 400;
+			src: url('https://www.vrt.be/etc.clientlibs/vrtnieuws/clientlibs/clientlib-v2-site/resources/fonts/Roobert-Regular.woff2');
+		}
+
+		@font-face {
+			font-family: Roobert;
+			font-weight: 600;
+			src: url('https://www.vrt.be/etc.clientlibs/vrtnieuws/clientlibs/clientlib-v2-site/resources/fonts/Roobert-SemiBold.woff2');
+		}
+
+		:root {
+			color-scheme: light dark;
+			--primary: #5541f0;
+		}
+
+		body {
+			font-family: Roobert, system-ui, sans-serif;
+		}
+
+		.stack {
+			flex-direction: column;
+			align-items: start;
+			gap: 8px;
+			display: flex;
+		}
+
+		.grid {
+			padding: 0 1em;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+			margin-top: 1em;
+		}
+
+		.correct {
+			padding: 0 1em;
+		}
+
+		.part {
+			cursor: pointer;
+			padding: 8px 16px;
+			border-radius: 4px;
+			background: light-dark(#e8e8e8, #0c151c);
+			transition: all 0.2s;
+			user-select: none;
+		}
+
+		.today {
+			font-weight: 100;
+		}
+
+		.lives-left {
+			font-size: 1.5rem;
+			margin: 1rem 0;
+		}
+
+		.highlight {
+			background: var(--primary);
+			color: white;
+			border-radius: 0.25em;
+			padding: 0 0.25em;
+		}
+
+		.lives {
+			letter-spacing: 6px;
+			color: var(--primary);
+		}
+
+		.shuffle, .shuffle:focus {
+			background: var(--primary);
+			color: white;
+			border-radius: 100px;
+		}
+
+		h1 {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>VRT <span class="highlight">Connections</span> <span class="today"></span></h1>
+	<p>Combineer de onderstaande helften van dubbelpunt-krantenkoppen uit vrtnws.</p>
+	<button class="shuffle">Shuffle</button>
+	<div class="vrt grid">
+	</div>
+	<div class="lives-left">Score: <span class="score">0</span>/<span class="max-score">0</span> <span
+			class="lives">●●●●</span></div>
+	<div class="correct stack" style="margin-top:1em">
+	</div>
+	<script>
+		let lives = 4;
+		const abs = x => Math.abs(x);
+		const iota = n => new Array(n).fill(undefined).map((_, i) => i);
+		const S = q => document.querySelector(q);
+		const SS = q => document.querySelectorAll(q);
+		const C = (name, data = {}, children = []) => {
+			if (typeof data === "string") data = { className: data };
+			const result = Object.assign(document.createElement(name), data);
+			if (!Array.isArray(children)) children = [children];
+			result.append(...children);
+			return result;
+		};
+
+		function alts(x) {
+			return [
+				... (x?.action?.uri && x?.title?.text ? [x] : []),
+				... (typeof x === "object" && x !== null ? Object.values(x).flatMap(alts) : [])
+			]
+		}
+
+		function shuffle(array) {
+			let currentIndex = array.length;
+
+			// While there remain elements to shuffle...
+			while (currentIndex != 0) {
+
+				// Pick a remaining element...
+				let randomIndex = Math.floor(Math.random() * currentIndex);
+				currentIndex--;
+
+				// And swap it with the current element.
+				[array[currentIndex], array[randomIndex]] = [
+					array[randomIndex], array[currentIndex]];
+			}
+		}
+
+		let selected = null;
+		let busy = false;
+
+		function clean(part) {
+			part = part.trim();
+			if (/^".*"$/.test(part)) part = part.slice(1, -1);
+			part = part[0].toUpperCase() + part.slice(1);
+			return part;
+		}
+
+		fetch("https://room.foldr.moe/vrtnws").then(async (response) => {
+			S(".today").innerText = new Date().toLocaleDateString("nl-BE", { day: "numeric", month: "long", year: "numeric" });
+			S(".shuffle").onclick = () => {
+				for (const part of [...SS(".part")]) {
+					part.style.order = `${Math.random() * 1e5 | 0}`;
+				}
+			};
+			const vrt = await response.json();
+			const headlines = alts(vrt);
+			const hrefs = [];
+			let parts = [];
+			let originals = [];
+			for (const headline of headlines) {
+				const match = headline.title.text.match(/^(.+):\s+(.+)$/);
+				if (match) {
+					originals.push(headline.title.text);
+					hrefs.push(headline.action.uri);
+					parts.push(clean(match[1]));
+					parts.push(clean(match[2]));
+				}
+			}
+			S(".max-score").innerText = originals.length;
+			const shuffled = [...parts];
+			shuffle(shuffled);
+			shuffled.sort();
+			console.log(shuffled);
+			for (const line of shuffled) {
+				const card = C("div", "part", line);
+				card.onclick = (e) => {
+					if (!e.target) return;
+					if (busy) return;
+					if (e.target.done) return;
+					if (!selected) {
+						e.target.style.background = "var(--primary)";
+						e.target.style.color = "#fff";
+						selected = e.target;
+					} else if (e.target === selected) {
+						e.target.style.background = "";
+						e.target.style.color = "";
+						selected = null;
+					} else {
+						e.target.style.background = "var(--primary)";
+						e.target.style.color = "#fff";
+						busy = true;
+						setTimeout(() => {
+							e.target.style.background = "var(--primary)";
+							e.target.style.color = "#fff";
+							const i = parts.indexOf(e.target.innerText);
+							const j = parts.indexOf(selected.innerText);
+							console.log(i, j);
+							const correct = Math.floor(i / 2) == Math.floor(j / 2);
+							if (correct) {
+								for (const card of [e.target, selected]) {
+									card.done = true;
+									card.style.background = "#0b4";
+									card.style.color = "#fff";
+								}
+
+								setTimeout(() => {
+									S(".correct").append(C("a", { href: hrefs[Math.floor(i / 2)] }, originals[Math.floor(i / 2)]));
+									S(".score").innerText -= -1;
+
+									for (const card of [e.target, selected]) {
+										card.style = "display:none";
+									}
+									busy = false; selected = null;
+
+								}, 500);
+
+
+							} else {
+								e.target.style.background = "#e20";
+								e.target.style.color = "#fff";
+								selected.style.background = "#e20";
+								selected.style.color = "#fff";
+
+								S(".lives").innerText = "●".repeat(--lives);
+
+								setTimeout(() => {
+									e.target.style.background = "";
+									selected.style.background = "";
+									e.target.style.color = "";
+									selected.style.color = "";
+
+									busy = false; selected = null;
+
+								}, 500);
+							}
+
+						}, 300);
+					}
+				}
+				S(".vrt").append(card)
+			}
+		});
+	</script>
+</body>
+
+</html>
