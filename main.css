@@ -1,13 +1,74 @@
+@font-face {
+  font-family: 'iA Writer Quattro S';
+  src: url('fonts/iAWriterQuattroS-Regular.woff') format('woff'),
+       url('fonts/iAWriterQuattroS-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'iA Writer Quattro S';
+  src: url('fonts/iAWriterQuattroS-Bold.woff') format('woff'),
+       url('fonts/iAWriterQuattroS-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'iA Writer Quattro S';
+  src: url('fonts/iAWriterQuattroS-Italic.woff') format('woff'),
+       url('fonts/iAWriterQuattroS-Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'iA Writer Quattro S';
+  src: url('fonts/iAWriterQuattroS-BoldItalic.woff') format('woff'),
+       url('fonts/iAWriterQuattroS-BoldItalic.ttf') format('truetype');
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'iA Writer Mono S';
+  src: url('fonts/iAWriterMonoS-Regular.woff') format('woff'),
+       url('fonts/iAWriterMonoS-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'IBM Selectric';
+  src: url('fonts/IBM Selectric Light Italic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+  size-adjust: 150%;
+}
+
+:root {
+  color-scheme: light dark;
+
+  --font-body: 'iA Writer Quattro S', 'Droid Sans', 'DejaVu Sans', 'Tahoma', 'Verdana', sans-serif;
+  --font-mono: 'iA Writer Mono S', 'Droid Sans Mono', 'DejaVu Sans Mono', 'Monaco', 'Consolas', monospace;
+  --font-heading: 'IBM Selectric', serif;
+
+  --color-text: light-dark(#222, #ddd);
+  --color-bg: light-dark(#fdfdfc, #1a0a2a);
+  --color-accent: light-dark(#d70, #ea3);
+  --color-accent-hover: light-dark(#f09020, #ffb040);
+}
+
 /* Style for the whole page. */
 body {
-  margin: 0px auto;
-  padding: 20px;
+  margin: 0px auto 0px 8vw;
+  padding: 2vw 10px 10px 0;
   max-width: 38em;
-  line-height: 1.3;
-  font-family: 'Droid Sans', 'DejaVu Sans', 'Tahoma', 'Verdana', sans-serif;
+  line-height: 1.375;
+  font-family: var(--font-body);
   font-size: 16px;
-  color: #222;
-  background-color: white;
+  color: var(--color-text);
+  background-color: var(--color-bg);
 }
 
 @media only screen and (min-height: 600px) and (min-width: 38em) {
@@ -24,8 +85,10 @@ body {
 }
 
 /* Some niceties: */
-h1, tt { font-family: 'Droid Sans Mono', 'DejaVu Sans Mono', 'Monaco', 'Consolas', monospace; }
-hr { border: none; width: 50%; height: 3px; background-color: #e08010; }
-a { color: #e08010; text-decoration: none; }
-a:hover { color: #f09020; }
+h1 { font-family: var(--font-heading); }
+tt { font-family: var(--font-mono); }
+li { list-style-type: square; }
+hr { border: none; width: 50%; height: 3px; background-color: var(--color-accent); }
+a { color: var(--color-accent); text-decoration: none; margin: 0 -3px; padding: 0 3px; }
+a:hover { color: var(--color-accent-hover); background-color: light-dark(#fff7e0, #228); }
 cite { font-style: normal; }

@@ -11,19 +11,6 @@
       * {
         box-sizing: border-box;
       }
-      body::after {
-        content: "❦";
-        line-height: 0.8;
-        white-space: pre;
-        position: fixed;
-        bottom: 0px;
-        left: 0px;
-        transform: rotate(12deg);
-        font-size: min(50vw, 50vh);
-        z-index: -999;
-        color: transparent;
-        text-shadow: 0 0 2px #e080100c;
-      }
       .entry {
         border-left: 1px double #333;
         margin-left: 1.75rem;
@@ -50,7 +37,8 @@
       .when.academic { outline: 1px solid #333; background: white; }
       .when.job { background: #333; color: white; }
       .when.now { box-shadow: 0px 0px 0px 2px white, 0px 0px 0px 4px #e08010; }
-      img { float: right; margin: 0 0 8px 8px; transform: rotate(3deg); }
+      img { float: right; margin: 0 0 8px 8px; transform: rotate(3deg) translateX(1rem); border-radius: 1rem; }
+      img:hover { transform: rotate(4deg) translateX(1rem); }
       h2 { border-bottom: 1px solid rgba(0, 0, 0, 0.2); }
       li { margin-bottom: 8px; }
     </style>
@@ -58,7 +46,7 @@
   <body id="top">
     <header>
       <a id="top" style="float:right" href="..">to homepage</a>
-      <h1>Lynn Van Hauwe <span style="font-size:14px;font-weight:normal;">(she/her)</span></h1>
+      <div style="display:flex;align-items:baseline;flex-direction:row;gap:1rem;"><h1>Lynn Van Hauwe</h1> <span>(she/her)</span></div>
       <img src="lynn.jpg" height="200">
       <p>Hello! I'm a full-stack software engineer based in Antwerp, Belgium.</p>
       <p>I'm <a href="http://github.com/lynn">@lynn</a> on GitHub, and <a href="https://bsky.app/profile/chordbug.bsky.social">@chordbug.bsky.social</a> on Bluesky. I'm hardly ever on <a href="https://www.linkedin.com/in/moth/">LinkedIn</a>.</p>
@@ -72,6 +60,7 @@
         <li><strong>Fancy ones, even:</strong> WebRTC, MSE, WebAudio, WebGL, Three.js</li>
         <li><strong>Powering backends:</strong> Rust & tokio, C#, C++, Node.js, Haskell</li>
         <li><strong>Automating stuff:</strong> Bash, PowerShell, Python, GitHub Actions</li>
+        <li><strong>AI:</strong> lots of experience partnering critically with Claude Code and tinkering with local LLMs</li>
         <li><strong>Managing code:</strong> git, npm, Visual Studio Code extensions</li>
         <li><strong>Native apps:</strong> Flutter, Android, iOS, Windows API</li>
         <li><strong>Domain knowledge:</strong> compilers, functional programming, REST APIs, accessibility, localization, computer graphics, Unicode, fonts, math</li>
