@@ -85,7 +85,7 @@ body {
 }
 
 /* Some niceties: */
-h1 { font-family: var(--font-heading); }
+h1 { font-family: var(--font-heading); font-weight: normal; }
 tt { font-family: var(--font-mono); }
 li { list-style-type: square; }
 hr { border: none; width: 50%; height: 3px; background-color: var(--color-accent); }
