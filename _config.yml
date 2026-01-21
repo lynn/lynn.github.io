@@ -1,0 +1,15 @@
+# Jekyll configuration
+title: lynn's house
+author: Lynn
+description: look!! a strange bug
+url: https://lynn.github.io
+
+# Build settings
+markdown: kramdown
+permalink: /blog/:year/:month/:day/:title/
+
+# Exclude files from processing
+exclude:
+  - README.md
+  - readme.txt
+  - git.sh

@@ -41,6 +41,22 @@
         <a href="https://ko-fi.com/chordbug">buy me a coffee</a>.
         <span aria-hidden="true"> ♡</span></p>
       <p>Thanks for stopping by.</p>
+
+      <hr>
+
+      <h2>Blog</h2>
+      {% if site.posts.size > 0 %}
+        <ul>
+        {% for post in site.posts %}
+          <li>
+            <a href="{{ post.url }}">{{ post.title }}</a>
+            <span style="color: var(--color-text); opacity: 0.6;"> — {{ post.date | date: "%B %d, %Y" }}</span>
+          </li>
+        {% endfor %}
+        </ul>
+      {% else %}
+        <p>No posts yet.</p>
+      {% endif %}
     </main>
   </body>
 </html>
