@@ -71,6 +71,12 @@ body {
   background-color: var(--color-bg);
 }
 
+article { text-align: justify; line-height: 1.5; }
+article time { display: block; text-align: right; font-style: italic; }
+article pre { background-color: light-dark(#fff7e0, #2a1a3a); border: 1px solid #8888; padding: 0.5em 1.4em; line-height: 1.25; }
+article code { background-color: light-dark(#fff7e0, #2a1a3a); border: 1px solid #8888; padding: 0em 0.4em; }
+article pre code { background-color: transparent; padding: 0; border: none; }
+
 @media only screen and (min-height: 600px) and (min-width: 38em) {
   .short-screen { display: none; }
 }
@@ -86,9 +92,9 @@ body {
 
 /* Some niceties: */
 h1 { font-family: var(--font-heading); font-weight: normal; }
-tt { font-family: var(--font-mono); }
+tt, code, pre { font-family: var(--font-mono); }
 li { list-style-type: square; }
 hr { border: none; width: 50%; height: 3px; background-color: var(--color-accent); }
 a { color: var(--color-accent); text-decoration: none; margin: 0 -3px; padding: 0 3px; }
-a:hover { color: var(--color-accent-hover); background-color: light-dark(#fff7e0, #228); }
+a:hover { color: var(--color-accent-hover); background-color: light-dark(#fff7e0, #222); }
 cite { font-style: normal; }
