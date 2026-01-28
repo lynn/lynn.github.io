@@ -76,8 +76,8 @@ article time { display: block; text-align: right; font-style: italic; }
 article pre { background-color: light-dark(#fff7e0, #2a1a3a); border: 1px solid #8888; padding: 0.5em 1.4em; line-height: 1.25; font-size: 14px; overflow-x: scroll; }
 article code { background-color: light-dark(#fff7e0, #2a1a3a); border: 1px solid #8888; padding: 0em 0.4em; }
 article pre code { background-color: transparent; padding: 0; border: none; }
-article pre .c { opacity: 0.5; }
-article pre .nl { opacity: 0.75; }
+pre .c { opacity: 0.5; }
+pre .nl, pre .kl, pre .kr { opacity: 0.75; }
 
 @media only screen and (min-height: 600px) and (min-width: 38em) {
   .short-screen { display: none; }
