@@ -6,10 +6,9 @@ url: https://lynn.github.io
 
 # Build settings
 markdown: kramdown
-permalink: /blog/:year/:month/:day/:title/
+permalink: /blog/:title/
 
 # Exclude files from processing
 exclude:
   - README.md
   - readme.txt
-  - git.sh
