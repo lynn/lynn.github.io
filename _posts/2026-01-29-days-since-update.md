@@ -6,7 +6,7 @@ date: 2026-01-29
 
 **Sometimes I wake** up in a cold sweat and realize it's been three weeks since I ran `pacman -Syu`. No more. I use GNOME btw, so I made [a little GNOME shell extension](https://github.com/lynn/days-since-update) for myself, constantly showing how long it's been in the top bar.
 
-![Screenshot of the indicator in the top bar](./days-since-update.png)
+![Screenshot of the indicator in the top bar](/images/days-since-update.png)
 
 If it's been ten days or more, the number turns yellow.
 
