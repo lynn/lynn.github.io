@@ -33,7 +33,7 @@ Thanks for stopping by.
 
 {% if site.posts.size > 0 %}
 {% for post in site.posts %}
-- [{{ post.title }}]({{ post.url }}) <span style="color: var(--color-text); opacity: 0.6;">— {{ post.date | date: "%B %d, %Y" }}</span>
+- {{ post.date | date: "%Y-%M-%d" }} [{{ post.title }}]({{ post.url }})
 {% endfor %}
 {% else %}
 No posts yet.
