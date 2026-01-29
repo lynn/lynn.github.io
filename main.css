@@ -79,6 +79,7 @@ article pre code { background-color: transparent; padding: 0; border: none; }
 pre .c { opacity: 0.5; }
 pre .nl, pre .kl, pre .kr { opacity: 0.75; }
 li>p { margin: 0; }
+article img { max-height: 20em; }
 
 @media only screen and (min-height: 600px) and (min-width: 38em) {
   .short-screen { display: none; }

@@ -33,7 +33,7 @@ Thanks for stopping by.
 
 {% if site.posts.size > 0 %}
 {% for post in site.posts %}
-- {{ post.date | date: "%Y-%M-%d" }} [{{ post.title }}]({{ post.url }})
+- {{ post.date | date: "%Y-%m-%d" }} [{{ post.title }}]({{ post.url }})
 {% endfor %}
 {% else %}
 No posts yet.
