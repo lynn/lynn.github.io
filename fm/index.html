@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>FM Synthesizer</title>
+    <style>
+        body {
+            max-width: 800px;
+            font-family: "Inter", "Adwaita Sans", sans-serif;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .control {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        label+label {
+            opacity: 0.5;
+        }
+
+        label {
+            width: 180px;
+            display: inline-block;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            margin: 0 10px;
+        }
+
+        .value {
+            width: 80px;
+            text-align: right;
+        }
+
+        button {
+            font-family: inherit;
+            background: #eee;
+            border: 0;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #fe8;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                margin: 20px auto;
+            }
+
+            .control {
+                flex-direction: column;
+                align-items: stretch;
+                margin: 20px 0;
+            }
+
+            label {
+                width: auto;
+                margin-bottom: 5px;
+            }
+
+            label+label {
+                margin-bottom: 8px;
+            }
+
+            input[type="range"] {
+                margin: 0;
+                width: 100%;
+            }
+
+            .value {
+                width: auto;
+                text-align: left;
+                margin-top: 5px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>FM Synthesizer</h1>
+
+    <div class="control">
+        <label>carrier frequency</label><label>low ↔ high</label>
+        <input type="range" id="carrier" min="10" max="440" value="440" step="10">
+        <span class="value" id="carrier-val">440 Hz</span>
+    </div>
+
+    <div class="control">
+        <label>carrier amplitude</label><label>soft ↔ loud</label>
+        <input type="range" id="carrierAmp" min="0" max="1" value="0.3" step="0.01">
+        <span class="value" id="carrierAmp-val">0.30</span>
+    </div>
+
+    <div class="control">
+        <label>carrier decay</label><label>short ↔ long</label>
+        <input type="range" id="carrierDecay" min="0.1" max="5" value="1" step="0.1">
+        <span class="value" id="carrierDecay-val">1.0 s</span>
+    </div>
+
+    <div class="control">
+        <label>mod frequency</label><label>bass ↔ bell</label>
+        <input type="range" id="modulator" min="0" max="13" value="2" step="1">
+        <span class="value" id="modulator-val">1x</span>
+    </div>
+
+    <div class="control">
+        <label>mod amplitude</label><label>hum ↔ twang</label>
+        <input type="range" id="modIndex" min="0" max="10" value="2" step="0.1">
+        <span class="value" id="modIndex-val">2.0</span>
+    </div>
+
+    <div class="control">
+        <label>mod decay</label><label>chiff ↔ gong</label>
+        <input type="range" id="modDecay" min="0.1" max="5" value="1" step="0.1">
+        <span class="value" id="modDecay-val">1.0 s</span>
+    </div>
+
+    <div class="control">
+        <label>mod feedback</label><label>pure ↔ distorted</label>
+        <input type="range" id="feedback" min="0" max="3.5" value="0.5" step="0.01">
+        <span class="value" id="feedback-val">0.50</span>
+    </div>
+
+    <p style=opacity:0.5>(press <kbd>a s d f g h j k</kbd> on your keyboard ♫)</p>
+
+    <script>
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        // Get all controls
+        const controls = {
+            carrier: document.getElementById('carrier'),
+            carrierAmp: document.getElementById('carrierAmp'),
+            carrierDecay: document.getElementById('carrierDecay'),
+            modulator: document.getElementById('modulator'),
+            modIndex: document.getElementById('modIndex'),
+            modDecay: document.getElementById('modDecay'),
+            feedback: document.getElementById('feedback')
+        };
+
+        // Modulator ratio options: 8Hz, 0.5x, 1x, 2x, 3x, 4x, 5x, 6x, 7x, 8x, 9x
+        const modulatorRatios = [8, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+        function getModulatorFreq(carrierFreq, ratioIndex) {
+            if (ratioIndex === 0) {
+                return 8; // Fixed 8Hz vibrato
+            }
+            return carrierFreq * modulatorRatios[ratioIndex];
+        }
+
+        // Update displays
+        function updateDisplays() {
+            document.getElementById('carrier-val').textContent = controls.carrier.value + ' Hz';
+            document.getElementById('carrierAmp-val').textContent = parseFloat(controls.carrierAmp.value).toFixed(2);
+            document.getElementById('carrierDecay-val').textContent = parseFloat(controls.carrierDecay.value).toFixed(1) + ' s';
+
+            const modIndex = parseInt(controls.modulator.value);
+            if (modIndex === 0) {
+                document.getElementById('modulator-val').textContent = '8 Hz';
+            } else {
+                document.getElementById('modulator-val').textContent = modulatorRatios[modIndex] + 'x';
+            }
+
+            document.getElementById('modIndex-val').textContent = parseFloat(controls.modIndex.value).toFixed(1);
+            document.getElementById('modDecay-val').textContent = parseFloat(controls.modDecay.value).toFixed(1) + ' s';
+            document.getElementById('feedback-val').textContent = parseFloat(controls.feedback.value).toFixed(2);
+        }
+
+        // Add listeners to update displays and play on release
+        Object.values(controls).forEach(control => {
+            control.addEventListener('input', updateDisplays);
+            control.addEventListener('change', () => playTone());
+        });
+
+        let currentNode = null;
+
+        function playTone(freq = null) {
+            // Resume audio context (required by browsers)
+            audioContext.resume();
+
+            // Stop any currently playing tone
+            if (currentNode) {
+                currentNode.disconnect();
+                currentNode = null;
+            }
+
+            const carrierFreq = freq || parseFloat(controls.carrier.value);
+            const carrierAmp = parseFloat(controls.carrierAmp.value);
+            const carrierDecay = parseFloat(controls.carrierDecay.value);
+            const modulatorRatioIndex = parseInt(controls.modulator.value);
+            const modulatorFreq = getModulatorFreq(carrierFreq, modulatorRatioIndex);
+            const modIndex = parseFloat(controls.modIndex.value);
+            const modDecay = parseFloat(controls.modDecay.value);
+            const feedback = parseFloat(controls.feedback.value);
+
+            const duration = Math.max(carrierDecay, modDecay);
+            const bufferSize = 4096;
+            const scriptNode = audioContext.createScriptProcessor(bufferSize, 0, 1);
+            currentNode = scriptNode;
+
+            let t = 0;
+            let prevModulator = 0;
+            const dt = 1 / audioContext.sampleRate;
+
+            scriptNode.onaudioprocess = function (event) {
+                const output = event.outputBuffer.getChannelData(0);
+
+                for (let i = 0; i < bufferSize; i++) {
+                    if (t >= duration) {
+                        output[i] = 0;
+                        continue;
+                    }
+
+                    // Separate decay envelopes
+                    const carrierEnvelope = Math.exp(-5 * t / carrierDecay);
+                    const modEnvelope = Math.exp(-5 * t / modDecay) + 0.3;
+
+                    // FM synthesis with feedback and decay on modulator
+                    const modPhase = 2 * Math.PI * modulatorFreq * t + feedback * prevModulator;
+                    const modulator = Math.sin(modPhase) * modEnvelope;
+                    prevModulator = modulator;
+
+                    const carrierPhase = 2 * Math.PI * carrierFreq * t + modIndex * modulator;
+                    const carrier = Math.sin(carrierPhase);
+
+                    output[i] = carrier * carrierEnvelope * carrierAmp;
+                    t += dt;
+                }
+
+                // Disconnect after duration
+                if (t >= duration + 0.1) {
+                    scriptNode.disconnect();
+                    if (currentNode === scriptNode) {
+                        currentNode = null;
+                    }
+                }
+            };
+
+            scriptNode.connect(audioContext.destination);
+        }
+
+        // C major scale frequencies
+        const cMajorScale = {
+            'a': 261.63, // C4
+            's': 293.66, // D4
+            'd': 329.63, // E4
+            'f': 349.23, // F4
+            'g': 392.00, // G4
+            'h': 440.00, // A4
+            'j': 493.88, // B4
+            'k': 523.25  // C5
+        };
+
+        // Keyboard listener
+        document.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+            if (cMajorScale[key]) {
+                let frequency = cMajorScale[key];
+                if (controls.carrier.value < 260) frequency /= 2;
+                if (controls.carrier.value < 130) frequency /= 2;
+                playTone(frequency);
+            }
+        });
+
+        updateDisplays();
+    </script>
+</body>
+
+</html>
