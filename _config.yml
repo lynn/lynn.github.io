@@ -8,6 +8,8 @@ url: https://lynn.github.io
 markdown: kramdown
 permalink: /blog/:title/
 
+include: [".well-known"]
+
 # Exclude files from processing
 exclude:
   - README.md
