@@ -33,7 +33,7 @@ Thanks for stopping by.
 
 {% if site.posts.size > 0 %}
 {% for post in site.posts %}
-- <time datetime="{{ post.date | date: "%Y-%m-%d" }}">{{ post.date | date: "%Y-%m-%d" }}</time> [{{ post.title }}]({{ post.url }})
+- <p><time datetime="{{ post.date | date: "%Y-%m-%d" }}">{{ post.date | date: "%Y-%m-%d" }}</time> <a href="{{ post.url }}">{{ post.title }}</a></p>
 {% endfor %}
 {% else %}
 No posts yet.
