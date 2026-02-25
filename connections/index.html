@@ -156,7 +156,9 @@
 				}
 			};
 			const vrt = await response.json();
-			const headlines = alts(vrt);
+			const today = new Date();
+			const todayPath = `/${today.getFullYear()}/${String(today.getMonth() + 1).padStart(2, '0')}/${String(today.getDate()).padStart(2, '0')}/`;
+			const headlines = alts(vrt).filter(h => h.url.includes(todayPath));
 			const hrefs = [];
 			let parts = [];
 			let originals = [];
