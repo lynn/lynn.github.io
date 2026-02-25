@@ -117,7 +117,7 @@
 
 		function alts(x) {
 			return [
-				... (x?.action?.uri && x?.title?.text ? [x] : []),
+				... (x?.url && typeof x?.title === 'string' && x?.id ? [x] : []),
 				... (typeof x === "object" && x !== null ? Object.values(x).flatMap(alts) : [])
 			]
 		}
@@ -161,10 +161,10 @@
 			let parts = [];
 			let originals = [];
 			for (const headline of headlines) {
-				const match = headline.title.text.match(/^(.+):\s+(.+)$/);
+				const match = headline.title.match(/^(.+):\s+(.+)$/);
 				if (match) {
-					originals.push(headline.title.text);
-					hrefs.push(headline.action.uri);
+					originals.push(headline.title);
+					hrefs.push(headline.url);
 					parts.push(clean(match[1]));
 					parts.push(clean(match[2]));
 				}
