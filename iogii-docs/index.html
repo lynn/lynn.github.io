@@ -481,7 +481,12 @@ d</code></pre></td>
 <li>Then, if there are 🔵 <strong>complete, separate expressions at the end</strong> of the source code, those are <strong>popped</strong> and used next.</li>
 <li>Finally, the variable 🟡 <code>implicit</code> is used. Initially, this is also bound to the input, but it can be changed contextually.</li>
 </ol>
-<!-- ![The order in which missing values are provided to a program.](./parse.png) -->
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./parse.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="The order in which missing values are provided to a program."><img src="./parse.png" class="img-fluid figure-img" alt="The order in which missing values are provided to a program."></a></p>
+<figcaption>The order in which missing values are provided to a program.</figcaption>
+</figure>
+</div>
 <section id="rotating-programs" class="level3" data-number="3.2.1">
 <h3 data-number="3.2.1" class="anchored" data-anchor-id="rotating-programs"><span class="header-section-number">3.2.1</span> Rotating programs</h3>
 <p>A useful consequence of this mechanism is that a program like <code>'x2input^k</code>, containing a single reference to the input somewhere in the middle, can be <strong>rotated</strong>, moving the values before the input to the end and erasing <code>input</code> from the front.</p>
@@ -609,7 +614,7 @@ Note
 <p>It’s easier to explain the behavior of <code>i</code> by example. Let’s write an iogii program that iterates the function <span class="math inline">\(x \mapsto 2^x \bmod 99\)</span> on starting value 0, and prints the first 50 numbers.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./circle.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Translation of 2 0i^99%> to Python."><img src="./circle.png" height="300" alt="Translation of 2 0i^99%> to Python." class="figure-img"></a></p>
+<p><a href="./circle.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Translation of 2 0i^99%> to Python."><img src="./circle.png" height="300" alt="Translation of 2 0i^99%> to Python." class="figure-img"></a></p>
 <figcaption>Translation of <code>2 0i^99%&gt;</code> to Python.</figcaption>
 </figure>
 </div>
