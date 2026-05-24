@@ -49,7 +49,7 @@
 :root {
   color-scheme: light dark;
 
-  --font-body: 'iA Writer Quattro S', 'Droid Sans', 'DejaVu Sans', 'Tahoma', 'Verdana', sans-serif;
+  --font-body: /* 'iA Writer Quattro S', */ 'Droid Sans', 'DejaVu Sans', 'Tahoma', 'Verdana', sans-serif;
   --font-mono: 'iA Writer Mono S', 'Droid Sans Mono', 'DejaVu Sans Mono', 'Monaco', 'Consolas', monospace;
   --font-heading: 'IBM Selectric', serif;
 
@@ -71,7 +71,7 @@ body {
   background-color: var(--color-bg);
 }
 
-article { text-align: justify; line-height: 1.5; }
+article { text-align: left; line-height: 1.5; }
 article time { display: block; text-align: right; font-style: italic; }
 article pre { background-color: light-dark(#fff7e0, #2a1a3a); border: 1px solid #8888; padding: 0.5em 1.4em; line-height: 1.25; font-size: 14px; overflow-x: scroll; }
 article code { background-color: light-dark(#fff7e0, #2a1a3a); border: 1px solid #8888; padding: 0em 0.4em; }
