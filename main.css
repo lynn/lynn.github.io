@@ -65,7 +65,7 @@ body {
   padding: 2vw 10px 10px 0;
   max-width: 38em;
   line-height: 1.375;
-  letter-spacing: -0.7px;
+  /* letter-spacing: -0.7px; */
   font-family: var(--font-body);
   font-size: 16px;
   color: var(--color-text);
