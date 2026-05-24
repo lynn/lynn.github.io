@@ -1,34 +1,4 @@
-@font-face {
-  font-family: 'iA Writer Quattro S';
-  src: url('fonts/iAWriterQuattroS-Regular.woff') format('woff'),
-       url('fonts/iAWriterQuattroS-Regular.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'iA Writer Quattro S';
-  src: url('fonts/iAWriterQuattroS-Bold.woff') format('woff'),
-       url('fonts/iAWriterQuattroS-Bold.ttf') format('truetype');
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'iA Writer Quattro S';
-  src: url('fonts/iAWriterQuattroS-Italic.woff') format('woff'),
-       url('fonts/iAWriterQuattroS-Italic.ttf') format('truetype');
-  font-weight: normal;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: 'iA Writer Quattro S';
-  src: url('fonts/iAWriterQuattroS-BoldItalic.woff') format('woff'),
-       url('fonts/iAWriterQuattroS-BoldItalic.ttf') format('truetype');
-  font-weight: bold;
-  font-style: italic;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 @font-face {
   font-family: 'iA Writer Mono S';
