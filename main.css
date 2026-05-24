@@ -49,7 +49,7 @@
 :root {
   color-scheme: light dark;
 
-  --font-body: 'iA Writer Mono S', 'Inter', 'Droid Sans', 'DejaVu Sans', 'Tahoma', 'Verdana', sans-serif;
+  --font-body: 'Inter', 'Droid Sans', 'DejaVu Sans', 'Tahoma', 'Verdana', sans-serif;
   --font-mono: 'iA Writer Mono S', 'Droid Sans Mono', 'DejaVu Sans Mono', 'Monaco', 'Consolas', monospace;
   --font-heading: 'IBM Selectric', serif;
 
