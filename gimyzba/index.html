@@ -100,6 +100,7 @@
     { label: "1994", weights: "0.348,0.194,0.163,0.123,0.088,0.084", langs: CLASSIC },
     { label: "1995", weights: "0.347,0.196,0.16,0.123,0.089,0.085", langs: CLASSIC },
     { label: "1999", weights: "0.334,0.195,0.187,0.116,0.081,0.088", langs: CLASSIC },
+    { label: "evenly", str: "cmn:1,hin:1,eng:1,spa:1,rus:1,ara:1", langs: CLASSIC },
     { label: "Ilmen6 (L1+L2)",
       weights: "0.339,0.255,0.136,0.126,0.074,0.070",
       langs: ["eng", "cmn", "hin", "spa", "ara", "fra"] },
@@ -123,6 +124,7 @@
   // Build the "code:weight" string for a preset, scaling the fractional
   // weights up to readable integers (e.g. 0.347 → 347).
   function presetString(p) {
+    if (p.str) return p.str;
     const w = p.weights.split(",").map(Number);
     return p.langs.map((c, i) => `${c}:${Math.round(w[i] * 1000)}`).join(",");
   }
