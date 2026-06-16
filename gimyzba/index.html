@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>vlazba — gismu maker</title>
+<style>
+  body {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 4rem;
+    font: 16px/1.5 system-ui, sans-serif;
+    color: #222;
+  }
+  h1 { margin: 0 0 .25rem; }
+  p { margin: 0 0 1rem; }
+  a { color: #06c; }
+  label { display: block; margin: 1rem 0 .25rem; font-weight: 600; }
+  .hint { font-weight: 400; color: #666; font-size: .85rem; }
+  input[type="text"], select {
+    width: 100%;
+    padding: .5rem;
+    font: inherit;
+    border: 1px solid #999;
+    border-radius: 4px;
+  }
+  .checks label { display: inline-flex; align-items: center; gap: .4rem; font-weight: 400; margin-right: 1.5rem; }
+  button {
+    margin-top: 1.5rem;
+    padding: .6rem 1.2rem;
+    font: inherit;
+    cursor: pointer;
+  }
+  button:disabled { cursor: default; opacity: .6; }
+  .winner { margin: 1.5rem 0 .5rem; font-size: 1.5rem; font-weight: 700; letter-spacing: 2px; }
+  .meta { color: #666; font-size: .85rem; margin: 1rem 0 .5rem; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: .4rem .5rem; border-bottom: 1px solid #ddd; }
+  th { color: #666; font-weight: 600; font-size: .85rem; }
+  td.score { font-variant-numeric: tabular-nums; }
+  td.rafsi { color: #555; font-size: .9rem; }
+  td.rafsi s { color: #999; }
+  .taken-exp { text-decoration: underline dotted; text-underline-offset: 2px; }
+  .clash { color: #c00; }
+  .ok { color: #080; }
+  .error { color: #c00; margin-top: 1rem; }
+  code { background: #f0f0f0; padding: 0 .25rem; border-radius: 3px; }
+  .presets { display: flex; flex-wrap: wrap; gap: .4rem; margin: .5rem 0; }
+  .presets button { margin-top: 0; padding: .3rem .6rem; font-size: .85rem; }
+</style>
+</head>
+<body>
+  <h1>gimyzba</h1>
+  <p>Make Lojban gismu in your browser! See <a href="https://lojban.github.io/cll/4/14/" target="_blank" rel="noopener">CLL chapter 4.14</a>.</p>
+  <p><b>Tip!</b> After picking languages and weights, click "Copy LLM prompt", append a description of the concept you're making a gismu for, and let your favorite model do the hard work.</p>
+
+  <label for="langs">Languages
+    <span class="hint">code:weight pairs</span>
+  </label>
+  <div class="presets" id="presets"></div>
+  <input type="text" id="langs" autocomplete="off" spellcheck="false" />
+
+  <button id="copyPrompt" type="button">Copy LLM prompt</button>
+
+  <label for="words">Source words
+    <span class="hint" id="wordsHint"></span>
+  </label>
+  <input type="text" id="words" value="uan,rakan,ekspekt,esper,predpologa,mulud"
+         autocomplete="off" spellcheck="false" />
+
+  <label for="shapes">Shapes</label>
+  <input type="text" id="shapes" value="ccvcv,cvccv" />
+
+  <div class="checks">
+    <label><input type="checkbox" id="allLetters" /> Use all letters</label>
+    <input type="checkbox" id="dedup" checked hidden />
+    <label><input type="checkbox" id="requireRafsi" /> Require short rafsi</label>
+  </div>
+
+  <button id="go" disabled>Loading…</button>
+  <div id="error" class="error" hidden></div>
+  <div id="results"></div>
+
+<script type="module">
+  import init, { generate_gismu } from './vlazba.js';
+
+  // Full names for the ISO 639-3 codes used in the presets.
+  const NAMES = {
+    cmn: "Mandarin", eng: "English", spa: "Spanish", hin: "Hindi",
+    ara: "Arabic", ben: "Bengali", rus: "Russian", por: "Portuguese",
+    msa: "Malay", jpn: "Japanese", deu: "German", fra: "French",
+  };
+
+  // Weight presets. `langs` is the ordered source-language list the weights
+  // expect; source words must be given in that same order.
+  const CLASSIC = ["cmn", "hin", "eng", "spa", "rus", "ara"];
+  const PRESETS = [
+    { label: "1985", weights: "0.36,0.16,0.21,0.11,0.09,0.07", langs: CLASSIC },
+    { label: "1987", weights: "0.36,0.156,0.208,0.116,0.087,0.073", langs: CLASSIC },
+    { label: "1994", weights: "0.348,0.194,0.163,0.123,0.088,0.084", langs: CLASSIC },
+    { label: "1995", weights: "0.347,0.196,0.16,0.123,0.089,0.085", langs: CLASSIC },
+    { label: "1999", weights: "0.334,0.195,0.187,0.116,0.081,0.088", langs: CLASSIC },
+    { label: "Ilmen6 (L1+L2)",
+      weights: "0.339,0.255,0.136,0.126,0.074,0.070",
+      langs: ["eng", "cmn", "hin", "spa", "ara", "fra"] },
+    { label: "Ilmen8",
+      weights: "0.271,0.170,0.130,0.125,0.104,0.076,0.064,0.060",
+      langs: ["cmn", "eng", "spa", "hin", "ara", "ben", "rus", "por"] },
+    { label: "Ilmen12",
+      weights: "0.238,0.160,0.113,0.108,0.090,0.066,0.055,0.052,0.032,0.030,0.029,0.026",
+      langs: ["cmn", "eng", "spa", "hin", "ara", "ben", "rus", "por", "msa", "jpn", "deu", "fra"] },
+  ];
+  const DEFAULT_PRESET = 3; // 1995
+
+  const wordsEl = document.getElementById("words");
+  const langsEl = document.getElementById("langs");
+  const presetsEl = document.getElementById("presets");
+  const hintEl = document.getElementById("wordsHint");
+  const goBtn = document.getElementById("go");
+  const errorEl = document.getElementById("error");
+  const resultsEl = document.getElementById("results");
+
+  // Build the "code:weight" string for a preset, scaling the fractional
+  // weights up to readable integers (e.g. 0.347 → 347).
+  function presetString(p) {
+    const w = p.weights.split(",").map(Number);
+    return p.langs.map((c, i) => `${c}:${Math.round(w[i] * 1000)}`).join(",");
+  }
+
+  // Preset buttons that fill the Languages field.
+  PRESETS.forEach((p) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = p.label;
+    btn.addEventListener("click", () => {
+      langsEl.value = presetString(p);
+      updateHint();
+      run();
+    });
+    presetsEl.appendChild(btn);
+  });
+
+  // Parse the Languages field into ordered codes and normalized weights.
+  // Accepts "cmn:334,hin:195,…"; weights are scaled so they sum to 1.
+  function parseLangs() {
+    const codes = [], weights = [];
+    for (const part of langsEl.value.split(",")) {
+      const t = part.trim();
+      if (!t) continue;
+      const [code, w] = t.split(":");
+      codes.push(code.trim());
+      weights.push(parseFloat(w));
+    }
+    const total = weights.reduce((a, b) => a + (b || 0), 0);
+    const normalized = total > 0 ? weights.map((w) => w / total) : weights;
+    return { codes, weights: normalized };
+  }
+  function currentLangNames() {
+    return parseLangs().codes.map((c) => NAMES[c] || c);
+  }
+  function updateHint() {
+    hintEl.textContent = "in order: " + parseLangs().codes.join(", ");
+  }
+  langsEl.addEventListener("input", updateHint);
+
+  // Start on the default preset.
+  langsEl.value = presetString(PRESETS[DEFAULT_PRESET]);
+  updateHint();
+
+  function showError(msg) {
+    errorEl.textContent = msg;
+    errorEl.hidden = false;
+    resultsEl.innerHTML = "";
+  }
+
+  function render(data) {
+    errorEl.hidden = true;
+    const winnerHtml = data.winner
+      ? `<div class="winner">${data.winner}</div>`
+      : `<div class="winner">No clash-free candidate found.</div>`;
+
+    const rows = data.candidates.map((c) => {
+      const note = c.clash
+        ? `<span class="clash">like “${c.clash}”</span>`
+        : `<span class="ok">ok</span>`;
+      const rafsi = (c.rafsi || []).map((r) => {
+        if (r.assigned === "official") return `<s>${r.form}</s>`;
+        if (r.assigned === "experimental") return `<span class="taken-exp">${r.form}</span>`;
+        return r.form;
+      }).join(", ");
+      return `<tr>
+        <td>${c.word}</td>
+        <td class="score">${c.score.toFixed(4)}</td>
+        <td class="rafsi">${rafsi}</td>
+        <td>${note}</td>
+      </tr>`;
+    }).join("");
+
+    resultsEl.innerHTML = winnerHtml + `
+      <div class="meta">
+        ${data.candidateCount.toLocaleString()} valid candidates from
+        consonants <code>${data.consonants.join("")}</code> and
+        vowels <code>${data.vowels.join("")}</code>.
+        Rafsi shown <s>struck through</s> are taken by an official cmavo;
+        <span class="taken-exp">dotted</span> ones by an experimental cmavo.
+      </div>
+      <table>
+        <thead><tr><th>Candidate</th><th>Score</th><th>Possible rafsi</th><th>Existing gismu</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  }
+
+  function run() {
+    const words = wordsEl.value;
+    const weights = parseLangs().weights.join(",");
+    const shapes = document.getElementById("shapes").value;
+    const allLetters = document.getElementById("allLetters").checked;
+    const dedup = document.getElementById("dedup").checked;
+    const requireRafsi = document.getElementById("requireRafsi").checked;
+
+    try {
+      const json = generate_gismu(words, weights, shapes, allLetters, dedup, requireRafsi, 25);
+      render(JSON.parse(json));
+    } catch (e) {
+      showError(typeof e === "string" ? e : (e && e.message) || "Generation failed.");
+    }
+  }
+
+  goBtn.addEventListener("click", run);
+
+  // Re-run automatically when an option checkbox is toggled.
+  for (const id of ["allLetters", "requireRafsi"]) {
+    document.getElementById(id).addEventListener("change", run);
+  }
+
+  function llmPrompt() {
+    return `* Translate the concept below to the following languages: ${currentLangNames().join(", ")}.
+* For each language, output a line like "Word → Standard romanization → IPA without tone → transliteration to Lojban phonetics", for example "用心 → yòngxīn → /jʊŋɕin/ → iuncin".
+* Do not use "y" in the Lojban transliteration. For schwa, use another vowel; for /j/, use i. For /w/, use u.
+* Leave off standard morphological endings, such as -o -e -a in Spanish.
+* Consonant clusters consisting of a stop and the corresponding fricative are simplified to just the fricative (tc → c, dj → j).
+* Finally, output a comma-separated list of all the Lojban transliterations, in order.
+
+The word is:`;
+  }
+
+  const copyBtn = document.getElementById("copyPrompt");
+  copyBtn.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(llmPrompt());
+      const prev = copyBtn.textContent;
+      copyBtn.textContent = "Copied!";
+      setTimeout(() => { copyBtn.textContent = prev; }, 1500);
+    } catch (e) {
+      showError("Could not copy to clipboard: " + e);
+    }
+  });
+
+  init()
+    .then(() => {
+      goBtn.disabled = false;
+      goBtn.textContent = "Make gismu";
+      run();
+    })
+    .catch((e) => {
+      goBtn.textContent = "Failed to load";
+      showError("Could not load WebAssembly module: " + e);
+    });
+</script>
+</body>
+</html>
