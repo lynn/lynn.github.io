@@ -1,0 +1,374 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Zebra puzzle</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.2/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            $(".draggable").draggable();
+        });
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: arial;
+        }
+
+        .piece-list {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .piece-grid {
+            width: fit-content;
+            display: grid;
+            grid-template-rows: repeat(3rem);
+            grid-template-columns: 3rem 3rem 3rem 3rem 3rem;
+            gap: 4px;
+            z-index: -5;
+            pointer-events: none;
+
+        }
+
+        .draggable {
+            display: grid;
+            width: fit-content;
+            grid-template-rows: repeat(3rem);
+            gap: 4px;
+            position: relative;
+            pointer-events: none;
+        }
+
+        .w1 {
+            grid-template-columns: 3rem;
+        }
+
+        .w2 {
+            grid-template-columns: 3rem 3rem;
+        }
+
+        .draggable p,
+        p.slot {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            line-height: 1;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 8px;
+            position: relative;
+            background: white;
+        }
+
+        .draggable p {
+            z-index: 5;
+            pointer-events: all;
+            cursor: pointer;
+        }
+
+        p.spacer {
+            pointer-events: none;
+            background: none;
+        }
+
+        p.slot.empty {
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        p.slot.fixed {
+            border-radius: 0;
+            pointer-events: none;
+        }
+
+        p.num {
+            text-align: center;
+            line-height: 0.1;
+        }
+
+        .y1 {
+            border: 4px solid #ff8888;
+        }
+
+        .y2 {
+            border: 4px solid #ffcc33;
+        }
+
+        .y3 {
+            border: 4px solid #99cc77;
+        }
+
+        .y4 {
+            border: 4px solid #aaeeee;
+        }
+
+        .y5 {
+            border: 4px solid #99aaff;
+        }
+
+        .rule {
+            height: 250px;
+            border: 2px solid #888;
+            margin: 0 20px;
+        }
+
+        .either {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        .r1::after {
+            content: "";
+            background: #8886;
+            width: 8px;
+            height: 4px;
+            position: absolute;
+            left: calc(3rem - 4px);
+            top: calc(1.5rem - 6px);
+        }
+
+        .d1::after {
+            content: "";
+            background: #8886;
+            width: 4px;
+            height: calc(8px);
+            position: absolute;
+            top: calc(3rem - 4px);
+            left: calc(1.5rem - 6px);
+        }
+
+        .d2::after {
+            content: "";
+            background: #8886;
+            width: 4px;
+            height: calc(3rem + 8px);
+            position: absolute;
+            top: calc(3rem - 4px);
+            left: 30px;
+        }
+
+        .d3::after {
+            content: "";
+            background: #8886;
+            width: 4px;
+            height: calc(6rem + 12px);
+            position: absolute;
+            top: calc(3rem - 4px);
+            left: 8px;
+        }
+
+        .dr::after {
+            content: "";
+            background: #8886;
+            width: 4px;
+            height: 16px;
+            position: absolute;
+            right: -4px;
+            bottom: -16px;
+            transform-origin: 0 0;
+            transform: rotate(-45deg);
+        }
+
+        .dl::after {
+            content: "";
+            background: #8886;
+            width: 4px;
+            height: 16px;
+            position: absolute;
+            left: -4px;
+            bottom: -16px;
+            transform-origin: 0 0;
+            transform: rotate(45deg);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Zebra puzzle</h1>
+    <ul>
+        <li><a href="https://en.wikipedia.org/wiki/Zebra_Puzzle">There are five houses.</a></li>
+        <li>The Englishman lives in the red house.</li>
+        <li>The Spaniard owns the dog.</li>
+        <li>Coffee is drunk in the green house.</li>
+        <li>The Ukrainian drinks tea.</li>
+        <li>The green house is immediately to the right of the ivory house.</li>
+        <li>The Old Gold smoker owns snails.</li>
+        <li>Kools are smoked in the yellow house.</li>
+        <li>Milk is drunk in the middle house.</li>
+        <li>The Norwegian lives in the first house.</li>
+        <li>The man who smokes Chesterfields lives in the house next to the man with the fox.</li>
+        <li>Kools are smoked in the house next to the house where the horse is kept.</li>
+        <li>The Lucky Strike smoker drinks orange juice.</li>
+        <li>The Japanese smokes Parliaments.</li>
+        <li>The Norwegian lives next to the blue house.</li>
+    </ul>
+    Now, who drinks water? Who owns the zebra?
+    <hr/>
+    <div class="piece-list">
+
+        <div class="draggable w1">
+            <p class="y1 d1">Red</p>
+            <p class="y2">🏴󠁧󠁢󠁥󠁮󠁧󠁿</p>
+        </div>
+
+        <div class="draggable w2">
+            <p class="y1 r1">Ivr</p>
+            <p class="y1 d2">Grn</p>
+            <p class="spacer"></p>
+            <p class="spacer"></p>
+            <p class="spacer"></p>
+            <p class="y3">☕</p>
+        </div>
+
+        <div class="draggable w1">
+            <p class="y1 d3">Yel</p>
+            <p class="spacer"></p>
+            <p class="spacer"></p>
+            <p class="y4">K</p>
+        </div>
+
+        <div class="draggable w1">
+            <p class="y2 d2">🇯🇵</p>
+            <p class="spacer"></p>
+            <p class="y4">P</p>
+        </div>
+
+        <div class="draggable w1">
+            <p class="y2 d1">🇺🇦</p>
+            <p class="y3">🫖</p>
+        </div>
+
+        <div class="draggable w1">
+            <p class="y3 d1">🧃</p>
+            <p class="y4">L</p>
+        </div>
+
+        <div class="draggable w1">
+            <p class="y4 d1">O</p>
+            <p class="y5">🐌</p>
+        </div>
+
+        <div class="draggable w1">
+            <p class="y3">💦</p>
+        </div>
+
+        <div class="draggable w1">
+            <p class="y5">🦓</p>
+        </div>
+
+        <div class="rule"></div>
+
+        <div class="either">
+
+            <div class="draggable w2">
+                <p class="y4 dr">C</p>
+                <p class="spacer"></p>
+                <p class="spacer"></p>
+                <p class="y5">🦊</p>
+            </div>
+
+            <div class="or">— or —</div>
+
+            <div class="draggable w2">
+                <p class="spacer"></p>
+                <p class="y4 dl">C</p>
+                <p class="y5">🦊</p>
+                <p class="spacer"></p>
+            </div>
+        </div>
+
+        <div class="rule"></div>
+
+        <div class="either">
+
+            <div class="draggable w2">
+                <p class="y4 dr">K</p>
+                <p class="spacer"></p>
+                <p class="spacer"></p>
+                <p class="y5">🐎</p>
+            </div>
+
+            <div class="or">— or —</div>
+
+            <div class="draggable w2">
+                <p class="spacer"></p>
+                <p class="y4 dl">K</p>
+                <p class="y5">🐎</p>
+                <p class="spacer"></p>
+            </div>
+        </div>
+
+        <div class="rule"></div>
+
+        <div class="either">
+
+            <div class="draggable w2">
+                <p class="y1 dr">Blu</p>
+                <p class="spacer"></p>
+                <p class="spacer"></p>
+                <p class="y2">🇳🇴</p>
+            </div>
+
+            <div class="or">— or —</div>
+
+            <div class="draggable w2">
+                <p class="spacer"></p>
+                <p class="y1 dl">Blu</p>
+                <p class="y2">🇳🇴</p>
+                <p class="spacer"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="piece-grid">
+        <p class="num">1</p>
+        <p class="num">2</p>
+        <p class="num">3</p>
+        <p class="num">4</p>
+        <p class="num">5</p>
+        <p class="slot y1 empty"></p>
+        <p class="slot y1 empty"></p>
+        <p class="slot y1 empty"></p>
+        <p class="slot y1 empty"></p>
+        <p class="slot y1 empty"></p>
+        <p class="slot y2 fixed">🇳🇴</p>
+        <p class="slot y2 empty"></p>
+        <p class="slot y2 empty"></p>
+        <p class="slot y2 empty"></p>
+        <p class="slot y2 empty"></p>
+        <p class="slot y3 empty"></p>
+        <p class="slot y3 empty"></p>
+        <p class="slot y3 fixed">🥛</p>
+        <p class="slot y3 empty"></p>
+        <p class="slot y3 empty"></p>
+        <p class="slot y4 empty"></p>
+        <p class="slot y4 empty"></p>
+        <p class="slot y4 empty"></p>
+        <p class="slot y4 empty"></p>
+        <p class="slot y4 empty"></p>
+        <p class="slot y5 empty"></p>
+        <p class="slot y5 empty"></p>
+        <p class="slot y5 empty"></p>
+        <p class="slot y5 empty"></p>
+        <p class="slot y5 empty"></p>
+    </div>
+</body>
+
+</html>
