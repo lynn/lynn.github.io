@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Are women bourgeois?</title>
+<style>
+  @font-face {
+    font-family: 'Sina Nova';
+    src: url('fonts/SinaNova-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Sina Nova';
+    src: url('fonts/SinaNova-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+
+  body {
+    font-family: 'Sina Nova', Georgia, 'Times New Roman', serif;
+    font-size: 21px;
+    line-height: 1.4;
+    color: #e2decd;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    background: radial-gradient(ellipse 90% 80% at 50% 45%, #1e1a17f0 0%, #171310f0 75%, #131009f0 100%), url("./martinaise.jpg");
+    background-size: cover;
+  }
+
+  main { width: 100%; max-width: 380px; }
+  main:hover span[contenteditable=true] { text-decoration: underline; text-decoration-style: dashed; }
+
+  .skill { margin-left: -1em; color: #80bcd3; font-weight: 700; }
+  .meta { color: #a29d91; opacity: 0.7; }
+  .options { list-style: none; margin-top: 1.15em; margin-left: 1em; }
+  .options li { text-indent: -1.5em; }
+  .num { font-weight: bold; color: white; margin-right: 4px; }
+  .options .text { flex: 1 1 auto; min-width: 0; color: #c04937; }
+  .editable, #question { font: inherit; color: inherit; outline: none; caret-color: #e2decd; min-width: 1em; }
+  #question::selection { background: #c04937; color: #1d1916; }
+  .hint { margin-top:4rem;font-size:16px;transition:opacity 0.5s;opacity:0.75;cursor:pointer; }
+</style>
+</head>
+<body>
+<main>
+  <p>
+    <span class="skill">RHETORIC</span> <span class="meta">[Heroic: Failure]</span>
+    &ndash; Alright, here we go. We're devoting all your available brain
+    cells to coming up with a question about <span class="editable topic" contenteditable=true spellcheck=false>communism</span>. Scratch that, to
+    coming up with *the* question about <span class="editable topic" contenteditable=false spellcheck=false>communism</span>, the alpha and
+    omega of <span class="editable topic" contenteditable=false spellcheck=false>communism</span> questions, and that question is:
+  </p>
+  <ol class="options">
+    <li>
+      <span class="num">1. -</span>
+      <span class="text">(Whisper.) "<span id="question" contenteditable="true" spellcheck="false">Are women bourgeois?</span>"</span>
+    </li>
+    <li>
+      <span class="num">2. -</span>
+      <span class="text">Oh god, that's bad. Surely I can think of something better.</span>
+    </li>
+  </ol>
+  <p class="hint" onclick="this.style.opacity=0">(Modify the topic and the question, then take a screenshot of your browser. Click this hint to hide it.)</p>
+</main>
+<script>
+  const topics = document.querySelectorAll('.topic');
+  topics.forEach(el => {
+    el.addEventListener('input', () => {
+      const text = el.textContent;
+      topics.forEach(other => {
+        if (other !== el) other.textContent = text;
+      });
+    });
+  });
+</script>
+</body>
+</html>
