@@ -68,7 +68,7 @@ article img { max-height: 20em; }
 /* Some niceties: */
 h1 { font-family: var(--font-heading); font-weight: normal; }
 tt, code, pre { font-family: var(--font-mono); }
-ul li { list-style-type: square; }
+ul li { list-style-type: square; font-variant-numeric: tabular-nums; }
 hr { border: none; width: 50%; height: 3px; background-color: var(--color-accent); }
 a { color: var(--color-accent); text-decoration: none; margin: 0 -3px; padding: 0 3px; }
 a:hover { color: var(--color-accent-hover); background-color: light-dark(#fff7e0, #222); }
