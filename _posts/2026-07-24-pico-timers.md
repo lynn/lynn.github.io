@@ -34,7 +34,11 @@ To stop the glowing, you write `T.glow=0`. To extend the glow, you trigger `T.gl
 
 ### 2. Making stuff happen, later
 
-Let's say you want to play a *blip!* sound effect, two seconds from now.
+<div style="position:relative">
+<img src="https://rose.systems/omokuemun/i/frog.png" style="position: absolute; left: -40px; height: 20px; image-rendering:pixelated;" alt="A frog taking a nap in the left margin." title="This frog is taking a nap in the left margin.">
+
+Let's say you want to schedule a *blip!* sound effect, two seconds from now.
+</div>
 
 You set `T.blip=120` to start the timer, and then in your update function you write: `if (T.blip==1) sfx(2)`.
 
@@ -75,6 +79,7 @@ function DecTimers()
 end
 ```
 
-Most of the time, `last_timer` is 20, and so this function ticks only the "fast" timers `timer[0]` through `timer[20]`. But once every 21 frames,[^1] _IntervalTimerControl_ expires, and *all* timers, `timer[0]` through `timer[35]`, get ticked down.
+Most of the time, `last_timer` is 20, and so this function ticks only the "fast" timers `timer[0]` through `timer[20]`. But once every 21 frames, _IntervalTimerControl_ expires, and *all* timers, `timer[0]` through `timer[35]`, get ticked down.
 
 In particular, _IntervalTimerControl_ is reset once per level, and a "slow" timer is used to time the animation at the end of the level. This is the origin of the famous [frame rule](https://en.wikipedia.org/wiki/Super_Mario_Bros._speedrunning#Frame_rules) in Super Mario Bros. speedrunning! Your gameplay can't influence the value of _IntervalTimerControl_, and the level-end animation timer is synchronized to it, so you can mostly only improve your level times by 21-frame increments.
+
