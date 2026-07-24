@@ -4,7 +4,7 @@ title: "Setting timers in simple games (feat. the frame rule)"
 date: 2026-07-24
 ---
 
-Lately I've been reading [the disassembled source code to Super Mario Bros.](https://6502disassembly.com/nes-smb/SuperMarioBros.html), and I learned that events are scheduled for the future in much the same way I do it when making a quick game-jam game in Lua, such as [o moku e mun](https://rose.systems/omokuemun/).
+Lately I've been reading [the disassembled source code to Super Mario Bros.](https://6502disassembly.com/nes-smb/SuperMarioBros.html), and I learned that, in its code, events are scheduled for the future in much the same way I do it when making a quick game-jam game in Lua, such as [o moku e mun](https://rose.systems/omokuemun/).
 
 It's so simple it's barely a system! But I like how understandable-yet-flexible it is. I'll describe it in Lua, for use in a PICO-8 or Picotron game. It's two lines of code! Read 'em and weep.
 
