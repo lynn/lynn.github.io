@@ -31,8 +31,9 @@ Thanks for stopping by.
 
 ## Blog
 
-{% if site.posts.size > 0 %}
-{% for post in site.posts %}
+{% assign visible_posts = site.posts | where_exp: "post", "post.hidden != true" %}
+{% if visible_posts.size > 0 %}
+{% for post in visible_posts %}
 - <p><time datetime="{{ post.date | date: "%Y-%m-%d" }}">{{ post.date | date: "%Y-%m-%d" }}</time> <a href="{{ post.url }}">{{ post.title }}</a></p>
 {% endfor %}
 {% else %}

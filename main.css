@@ -50,7 +50,7 @@ article pre code { background-color: transparent; padding: 0; border: none; }
 pre .c, pre .c1 { opacity: 0.5; }
 pre .nl, pre .kl, pre .kr { opacity: 0.75; }
 li>p { margin: 0; }
-article img { max-height: 20em; }
+article img { max-width: 100%; max-height: 20em; }
 sub, sup { line-height: 0; }
 
 @media only screen and (min-height: 600px) and (min-width: 38em) {
