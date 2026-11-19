@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="jbo">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=Playwrite+FR+Moderne&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --fg: #222222;
+  --muted: #888888;
+  --accent: #222222;
+  --rule: #e5e5e5;
+  --side: #f5f5f5;
+  --bad: #c62828;
+  --uline: #9a9a9a;
+  --hl: #fff1b8;
+  --focus: #faf7ee;
+  --img-filter: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161616;
+    --fg: #e4e4e4;
+    --muted: #8c8c8c;
+    --accent: #ffffff;
+    --rule: #333333;
+    --side: #1e1e1e;
+    --bad: #ef7a7a;
+    --uline: #6a6a6a;
+    --hl: #4a4220;
+    --focus: #1f1d18;
+      --img-filter: sepia(0.35) brightness(0.8) contrast(0.95);
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 1.5rem; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 1.3rem;
+  line-height: 1.65;
+}
+a { color: inherit; }
+
+nav {
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  width: 13rem;
+  overflow-y: auto;
+  background: var(--side);
+  border-right: 1px solid var(--rule);
+  padding: 2rem 0;
+  font-size: 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
+}
+nav .home {
+  display: block;
+  padding: 0 1.5rem 1rem;
+  font-size: 1.1rem;
+  text-decoration: none;
+}
+nav ol { list-style: none; margin: 0; padding: 0; }
+nav li a {
+  display: block;
+  padding: 0.12rem 1.5rem;
+  text-decoration: none;
+  color: var(--muted);
+  border-left: 2px solid transparent;
+}
+nav li a:hover { color: var(--fg); }
+nav li a.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+
+main {
+  margin-left: 13rem;
+  padding: 3rem 2rem 6rem;
+}
+.book { max-width: 38rem; margin: 0 auto; }
+
+header.cover {
+  text-align: center;
+  padding: 3rem 0 2rem;
+}
+header.cover h1 {
+  font-size: 3rem;
+  line-height: 1.4;
+  margin: 0 0 1.5rem;
+  letter-spacing: 0.01em;
+}
+.byline { margin: 0.2rem 0; font-style: italic; }
+
+section.chapter { padding-top: 2rem; }
+h1, h2, nav .home, p.end {
+  font-family: "Playwrite FR Moderne", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin: 2rem 0 1.5rem;
+}
+h2 .dg { display: none; }
+p { margin: 0 0 0.9rem; hyphens: none; }
+p.dlg { margin-bottom: 0.35rem; padding-left: 1.2rem; text-indent: -1.2rem; }
+p.sub { text-align: center; font-style: italic; }
+p.end { text-align: center; font-size: 1.6rem; margin-top: 4rem; }
+figure { margin: 1.6rem 0; text-align: center; }
+figure img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  filter: var(--img-filter);
+  mix-blend-mode: multiply;
+}
+@media (prefers-color-scheme: dark) {
+  figure img { mix-blend-mode: normal; }
+}
+
+@media (max-width: 900px) {
+  nav {
+    position: sticky;
+    top: 0; bottom: auto;
+    width: auto;
+    padding: 0.5rem 16px;
+    border-right: 0;
+    border-bottom: 1px solid var(--rule);
+    z-index: 1;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+  nav .home { display: none; }
+  nav ol { display: flex; gap: 0.2rem; }
+  nav li a { padding: 0.1rem 0.5rem; border-left: 0; border-bottom: 2px solid transparent; }
+  nav li a.active { border-bottom-color: var(--accent); }
+  main { margin-left: 0; padding: 1rem 16px 4rem; }
+  html { scroll-padding-top: 3.5rem; }
+  header.cover h1 { font-size: 2.2rem; }
+}
+.opts {
+  margin: 2rem 0 0;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.opts label { display: block; cursor: pointer; }
+.opts input { accent-color: var(--fg); vertical-align: -0.1em; margin: 0 0.3em 0 0; }
+.br { display: none; color: var(--muted); opacity: 0.6; }
+body.subs .br { display: inline; }
+body.subs .br.hover { opacity: 1; color: var(--fg); }
+::highlight(subsentence) { background-color: var(--hl); }
+
+/* Margin notes: inline and parenthesized on narrow screens, in the right margin on wide ones. */
+.mn {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-style: normal;
+  font-size: 0.75em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.mn::before { content: "\00a0("; }
+.mn::after { content: ")"; }
+.mn .mn-word { display: none; }
+@media (min-width: 1200px) {
+  main { padding-right: 16rem; }
+  .mn {
+    float: right;
+    clear: right;
+    text-indent: 0;
+    width: 12rem;
+    margin: 0.35rem -14rem 0.5rem 0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    white-space: normal;
+  }
+  .mn::before, .mn::after { content: none; }
+  .mn .mn-word { display: inline; }
+}
+.byline a { color: inherit; text-decoration-color: var(--rule); text-underline-offset: 0.2em; }
+.byline a:hover { text-decoration-color: currentColor; }
+u { text-decoration: none; }
+body.selbri u {
+  text-decoration-line: underline;
+  text-decoration-color: var(--uline);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+body.selbri u u { text-underline-offset: 0.4em; }
+p.bad { color: var(--bad); }
+.q { font-style: italic; }
+
+/* Link and translation buttons in the left margin. The strip covers the whole
+   margin beside the paragraph, so hovering the margin also reveals them. */
+section.chapter > p { position: relative; }
+.pa {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: -7rem;
+  width: 7rem;
+  padding: 0.4rem 0.6rem 0 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 0.15rem;
+  text-indent: 0;
+  user-select: none;
+  opacity: 0.45;
+  transition: opacity 0.15s;
+}
+@media (hover: hover) { .pa { opacity: 0; } }
+p:hover > .pa, p.focus > .pa, .pa:focus-within, .pa:has(.open) { opacity: 1; }
+.pn {
+  margin-right: 0.3rem;
+  font-size: 0.8rem;
+  line-height: 1.5rem;
+  font-style: normal;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+/* The focused paragraph: the URL target, or the one whose icon was clicked. */
+/* It spans the full width of <main>, which clips the overflow. */
+main { overflow-x: clip; }
+section.chapter > p.focus::before {
+  content: "";
+  position: absolute;
+  top: -0.45rem; bottom: -0.45rem;
+  left: -100vw; right: -100vw;
+  z-index: -1;
+  background: var(--focus);
+  pointer-events: none;
+}
+.pa button {
+  display: flex;
+  padding: 0.15rem;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+.pa button:hover, .pa button.open, .pa button.done { color: var(--fg); }
+.pa svg {
+  width: 1rem; height: 1rem;
+  fill: none; stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.trpop {
+  position: absolute;
+  inset: auto;
+  margin: 0;
+  width: min(38rem, calc(100vw - 32px));
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 0.9rem 1.1rem 0.4rem;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.06);
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+.trpop p { margin: 0 0 0.6rem; }
+.trpop .tr-fr { font-style: italic; }
+.trpop .tr-en { border-top: 1px solid color-mix(in srgb, var(--rule) 50%, transparent); padding-top: 0.6rem; }
+
+/* The sidebar is hidden for now; remove the hidden attribute on <nav> to bring it back. */
+nav[hidden] { display: none; }
+nav[hidden] ~ main { margin-left: 0; }
+@media (max-width: 900px) {
+  .pa { left: -16px; width: 16px; padding: 0.35rem 0 0; flex-direction: column; align-items: center; justify-content: flex-start; }
+  .pa button { padding: 0.1rem 0; }
+  .pn { display: none; }
+  .pa svg { width: 0.8rem; height: 0.8rem; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+  <symbol id="i-tr" viewBox="0 0 24 24"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+</svg>
+<nav aria-label="mo'o" hidden>
+  <a class="home" href="#top">{{TITLE}}</a>
+  <ol>
+{{NAV}}
+  </ol>
+</nav>
+<main id="top">
+<div class="book">
+{{BODY}}
+</div>
+</main>
+<script>
+(() => {
+  const links = new Map();
+  document.querySelectorAll('nav li a').forEach((a) => links.set(a.getAttribute('href').slice(1), a));
+  const secs = [...document.querySelectorAll('section.chapter')];
+  const nav = document.querySelector('nav');
+  let current = null;
+  function update() {
+    const y = window.innerHeight * 0.3;
+    let best = null;
+    for (const s of secs) {
+      if (s.getBoundingClientRect().top <= y) best = s; else break;
+    }
+    const id = best ? best.id : null;
+    if (id === current) return;
+    current = id;
+    links.forEach((a) => a.classList.remove('active'));
+    if (!id) return;
+    const a = links.get(id);
+    a.classList.add('active');
+    const r = a.getBoundingClientRect(), n = nav.getBoundingClientRect();
+    if (r.top < n.top || r.bottom > n.bottom) nav.scrollTop += r.top - n.top - n.height / 2;
+    if (r.left < n.left || r.right > n.right) nav.scrollLeft += r.left - n.left - n.width / 2;
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+
+  // Hovering a subsentence bracket highlights everything up to its partner.
+  if (window.CSS && CSS.highlights && window.Highlight) {
+    let lit = [];
+    const clear = () => {
+      CSS.highlights.delete('subsentence');
+      lit.forEach((b) => b.classList.remove('hover'));
+      lit = [];
+    };
+    document.addEventListener('mouseover', (e) => {
+      const br = e.target.closest && e.target.closest('.br[data-pair]');
+      if (!br) return clear();
+      const pair = document.querySelectorAll(`.br[data-pair="${br.dataset.pair}"]`);
+      if (pair.length !== 2 || lit[0] === pair[0]) return;
+      clear();
+      const range = document.createRange();
+      range.setStartBefore(pair[0]);
+      range.setEndAfter(pair[1]);
+      CSS.highlights.set('subsentence', new Highlight(range));
+      lit = [...pair];
+      lit.forEach((b) => b.classList.add('hover'));
+    });
+  }
+
+  document.querySelectorAll('.opts input[data-class]').forEach((box) => {
+    const cls = box.dataset.class, key = 'cmalu-noltru-' + cls;
+    try { box.checked = localStorage.getItem(key) === '1'; } catch (e) {}
+    const apply = () => document.body.classList.toggle(cls, box.checked);
+    box.addEventListener('change', () => {
+      apply();
+      try { localStorage.setItem(key, box.checked ? '1' : '0'); } catch (e) {}
+    });
+    apply();
+  });
+})();
+(() => {
+  // Place each translation popover just under its paragraph.
+  document.addEventListener('toggle', (e) => {
+    const pop = e.target;
+    if (!pop.classList || !pop.classList.contains('trpop')) return;
+    const btn = document.querySelector(`[popovertarget="${pop.id}"]`);
+    if (!btn) return;
+    btn.classList.toggle('open', e.newState === 'open');
+    if (e.newState !== 'open') return;
+    const p = btn.closest('p').getBoundingClientRect();
+    const book = document.querySelector('.book').getBoundingClientRect();
+    const left = Math.max(16, Math.min(book.left, window.innerWidth - pop.offsetWidth - 16));
+    pop.style.left = `${left + window.scrollX}px`;
+    pop.style.top = `${p.bottom + window.scrollY + 6}px`;
+  }, true);
+
+  // Focus a paragraph: the URL target, or the one whose icon was clicked.
+  let focused = null;
+  const focus = (p) => {
+    if (focused) focused.classList.remove('focus');
+    focused = p;
+    if (p) p.classList.add('focus');
+  };
+  const focusHash = () => {
+    const p = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    focus(p && p.matches('section.chapter > p') ? p : null);
+  };
+  window.addEventListener('hashchange', focusHash);
+  focusHash();
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest && e.target.closest('.pa button');
+    if (btn) focus(btn.closest('p'));
+  });
+
+  // Copy a link to the paragraph, briefly showing a check mark.
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest && e.target.closest('.pl');
+    if (!btn) return;
+    const url = new URL(location.href);
+    url.hash = btn.dataset.id;
+    history.replaceState(null, '', url.hash);
+    try { await navigator.clipboard.writeText(url.href); } catch (err) { return; }
+    const use = btn.querySelector('use');
+    use.setAttribute('href', '#i-check');
+    btn.classList.add('done');
+    clearTimeout(btn.timer);
+    btn.timer = setTimeout(() => {
+      use.setAttribute('href', '#i-link');
+      btn.classList.remove('done');
+    }, 1200);
+  });
+})();
+</script>
+</body>
+</html>

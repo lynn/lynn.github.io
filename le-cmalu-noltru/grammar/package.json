@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "description": "Builds ../camxes.js from ilmentufa's camxes-beta.peg (plus: a prenex may follow a connected .i, e.g. .iki'ubo ry zo'u ...)",
+  "scripts": { "build": "node build-camxes.js" },
+  "dependencies": { "pegjs": "0.8.0" }
+}
