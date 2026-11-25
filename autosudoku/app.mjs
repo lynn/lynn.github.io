@@ -36,6 +36,8 @@ let selection = new Set([selected])
 let started = false
 let busy = false
 let timer, popping, hint, warning
+let startedAt, finishedAt
+let hintStage = 0
 let audio
 let dragPointer
 let lastHintKey, nextDeduction
@@ -57,7 +59,7 @@ function logMove(message) {
 function save() {
   try {
     localStorage.setItem(storageKey, JSON.stringify({
-      puzzle, grid, removed, sources, history, started
+      puzzle, grid, removed, sources, history, started, startedAt, finishedAt
     }))
   } catch {
     // Play remains available when browser storage is disabled.
@@ -188,9 +190,17 @@ function findNextDeduction(masks) {
   return nextDeduction
 }
 
+function solvedMessage() {
+  if (!startedAt || !finishedAt) return 'Solved'
+  const seconds = Math.max(0, Math.floor((finishedAt - startedAt) / 1000))
+  return 'Solved in ' + Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0')
+}
+
 function render() {
   const masks = candidates(grid, removed)
   const complete = grid.every(Boolean)
+  const reveal = hint && hintStage === 3
+  const hintDigit = hint && digits.find(d => hint.cuts[0][1] & bit(d))
   const matching = grid[selected]
   const counts = Array(10).fill(0)
   for (const value of grid) counts[value]++
@@ -198,10 +208,10 @@ function render() {
   for (const i of cells) {
     const tile = tiles[i]
     const value = grid[i]
-    const cuts = hint?.cuts.find(([j]) => j === i)?.[1] || 0
+    const cuts = reveal && (hint.cuts.find(([j]) => j === i)?.[1] & bit(hintDigit))
+    const anchors = reveal && hint.anchors.includes(i) && (masks[i] & hint.anchorMask)
     tile.className = ['cell', sources[i],
-      matching && matching === value && 'same', selection.has(i) && 'selected', hint?.anchors.includes(i) && 'anchor',
-      cuts && 'target',
+      matching && matching === value && 'same', selection.has(i) && 'selected',
       i === popping && 'popping'].filter(Boolean).join(' ')
     tile.setAttribute('aria-pressed', String(selection.has(i)))
     tile.tabIndex = i === selected ? 0 : -1
@@ -209,12 +219,13 @@ function render() {
     tile.setAttribute('aria-label', 'Row ' + (row(i) + 1) + ', column ' + (col(i) + 1) +
       (value ? ', ' + value + ', ' + sources[i] : ', candidates ' + options.join(', ')))
     const content = value ? '<span class="value' + (counts[value] === 9 ? ' complete-digit' : '') + '">' + value + '</span>' :
-      '<span class="notes">' + digits.map(d => '<span class="note' + (cuts & bit(d) ? ' cut' : '') +
+      '<span class="notes">' + digits.map(d => '<span class="note' + (cuts & bit(d) ? ' cut' : anchors & bit(d) ? ' anchor' : '') +
         (d === matching && (masks[i] & bit(d)) ? ' match' : '') +
         '">' + (masks[i] & bit(d) ? d : '') + '</span>').join('') + '</span>'
     if (tile.innerHTML !== content) tile.innerHTML = content
   }
-  byId('message').textContent = warning || (complete ? 'Solved!' : hint ? 'Try ' + moveLabel(hint) + '.' : '')
+  byId('message').textContent = warning || (complete ? solvedMessage() : hint ? 'Try ' + moveLabel(hint) + '.' +
+    (hintStage >= 2 ? ' Look for a way to eliminate ' + hintDigit + '.' : '') : '')
   byId('start').hidden = started
   byId('undo').disabled = !history.length
   byId('hint').disabled = !started || busy || complete
@@ -246,13 +257,15 @@ function settle(opening = false) {
     if (singles.length) {
       logMove('Automated ' + singles.length + (singles.length === 1 ? ' single.' : ' singles.'))
     }
-    render()
     if (grid.every(Boolean)) {
+      finishedAt = Date.now()
+      save()
       board.classList.add('victory')
       playNotes([55, 60, 65, 70, 74, 79], .09, .52)
     } else if (opening) {
       playNotes([67, 72, 77], .045, .16, .038)
     }
+    render()
   }
   function placeSingle(index) {
     const next = singles[index]
@@ -293,6 +306,8 @@ function reset(clues, start = true) {
   const choice = chosenReason()
   if (choice) choice.checked = false
   started = start
+  startedAt = start ? Date.now() : undefined
+  finishedAt = undefined
   busy = false
   popping = hint = warning = undefined
   save()
@@ -362,6 +377,8 @@ function undo() {
   playNotes([74, 67], .045, .12, .034)
   clearTimeout(timer)
   board.classList.remove('victory')
+  if (finishedAt && startedAt) startedAt += Date.now() - finishedAt
+  finishedAt = undefined
   ;({grid, removed, sources, selected} = previous)
   selection = new Set(previous.selection ?? [selected])
   logMove('Undid last elimination.')
@@ -399,6 +416,7 @@ byId('restart').onclick = () => { unlockAudio(); reset(puzzle) }
 byId('start').onclick = () => {
   unlockAudio()
   started = true
+  startedAt = Date.now()
   save()
   settle(true)
 }
@@ -410,6 +428,7 @@ reason.onchange = () => {
   render()
 }
 byId('hint').onclick = () => {
+  hintStage = hint ? Math.min(3, hintStage + 1) : 1
   hint = findNextDeduction(candidates(grid, removed))
   warning = hint ? undefined : 'No supported deduction found.'
   render()
@@ -443,6 +462,9 @@ if (puzzle && saved.grid?.length === 81 && saved.removed?.length === 81 && saved
   ;({grid, removed, sources} = saved)
   history = Array.isArray(saved.history) ? saved.history : []
   started = true
+  startedAt = saved.startedAt ?? (grid.every(Boolean) ? undefined : Date.now())
+  finishedAt = saved.finishedAt
+  save()
   selected = Math.max(0, grid.indexOf(0))
   selection = new Set([selected])
   if (grid.every(Boolean)) render()

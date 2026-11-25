@@ -31,14 +31,13 @@ button:disabled { cursor: default; opacity: .45; }
 .cell.same { background: #e3edfb; }
 .cell.selected { background: var(--selection); box-shadow: inset 0 0 0 2px var(--ink); }
 .cell:focus-visible { outline: 0; box-shadow: inset 0 0 0 3px var(--accent); z-index: auto; }
-.cell.anchor { background: #dddff5; }
-.cell.target { background: #f9dfc4; }
 .value { font-variant-numeric: tabular-nums; font-size: clamp(1.18rem, 3.7vw, 2.15rem); line-height: 1; font-weight: 700; }
 .value.complete-digit { opacity: .5; }
 .notes { display: grid; width: 91%; height: 91%; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); place-items: center; }
 .note { color: var(--muted); font-size: clamp(.61rem, 1.48vw, .88rem); font-weight: 550; line-height: 1; display: grid; place-items: center; width: 100%; height: 100%; }
 .note.match { background: #c6dcfa; color: var(--ink); border-radius: 3px; font-weight: 750; }
-.note.cut { color: #a2391e; text-decoration: line-through; font-weight: 850; }
+.note.anchor { background: #e4d6fa; color: #452d69; border-radius: 3px; }
+.note.cut { background: #f9dfc4; border-radius: 3px; color: #a2391e; text-decoration: line-through; font-weight: 850; }
 .cell.popping { animation: flash 90ms ease-out; }
 .cell.popping .value { animation: pop 85ms ease-out; }
 @keyframes pop { 0% { transform: scale(.58); opacity: .35; } 55% { transform: scale(1.2); } }

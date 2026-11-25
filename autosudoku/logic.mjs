@@ -43,9 +43,9 @@ function* combinations(items, n, start = 0, chosen = []) {
 
 export function* deductions(masks) {
   const active = cells.filter(i => masks[i])
-  function step(name, anchors, targets, mask) {
+  function step(name, anchors, targets, mask, anchorMask = mask) {
     const cuts = targets.filter(i => masks[i] & mask).map(i => [i, masks[i] & mask])
-    if (cuts.length) return {name, anchors, cuts}
+    if (cuts.length) return {name, anchors, anchorMask, cuts}
   }
   for (const b of bits) {
     for (const line of lines) {
@@ -70,7 +70,7 @@ export function* deductions(masks) {
       const pairs = bits.map(b => ({b, cells: line.filter(i => masks[i] & b)})).filter(p => p.cells.length === 2)
       for (const [a, b] of combinations(pairs, 2)) {
         if (a.cells[0] !== b.cells[0] || a.cells[1] !== b.cells[1]) continue
-        const result = step('Hidden pair', a.cells, a.cells, full & ~(a.b | b.b))
+        const result = step('Hidden pair', a.cells, a.cells, full & ~(a.b | b.b), a.b | b.b)
         if (result) yield result
       }
     }
