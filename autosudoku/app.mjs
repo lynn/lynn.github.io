@@ -1,5 +1,4 @@
 import {digits, cells, row, col, bit, candidates, single, deductions} from './logic.mjs'
-import {puzzles} from './puzzles.mjs'
 
 const byId = id => document.getElementById(id)
 const board = byId('board')
@@ -24,7 +23,12 @@ function readSave() {
   catch { return {} }
 }
 const saved = readSave()
-let puzzle = puzzles[saved.puzzle] ? saved.puzzle : 0
+// Older saves used a catalog index. Their source labels preserve the clues.
+let puzzle = typeof saved.puzzle === 'string' && /^[0-9]{81}$/.test(saved.puzzle)
+  ? saved.puzzle
+  : saved.sources?.length === 81 && saved.grid?.length === 81
+    ? saved.grid.map((d, i) => saved.sources[i] === 'given' ? d : 0).join('')
+    : undefined
 let givens, grid, removed, sources
 let history = []
 let selected = 0
@@ -38,9 +42,9 @@ let lastHintKey, nextDeduction
 const hintPriority = ['Naked pair', 'X-Wing', 'Chain']
 const moveLabel = move => move.pattern ? move.name + ' (' + move.pattern + ')' : move.name
 
-function configure(index) {
-  puzzle = index
-  givens = [...puzzles[index][0]].map(Number)
+function configure(clues) {
+  puzzle = clues
+  givens = [...clues].map(Number)
 }
 
 function logMove(message) {
@@ -275,11 +279,11 @@ function settle(opening = false) {
   }
 }
 
-function reset(index, start = true) {
+function reset(clues, start = true) {
   clearTimeout(timer)
   log.replaceChildren()
   board.classList.remove('victory')
-  configure(index)
+  configure(clues)
   grid = [...givens]
   removed = cells.map(() => 0)
   sources = givens.map(d => d ? 'given' : '')
@@ -367,7 +371,30 @@ function undo() {
   render()
 }
 
-byId('new').onclick = () => { unlockAudio(); reset((puzzle + 1) % puzzles.length) }
+function requestPuzzle(start) {
+  const button = byId('new')
+  button.disabled = true
+  button.textContent = 'Generating…'
+  const layout = document.querySelector('.layout')
+  layout.inert = true
+  const worker = new Worker(new URL('./generator-worker.mjs', import.meta.url), {type: 'module'})
+  function finish() {
+    worker.terminate()
+    button.disabled = false
+    button.textContent = 'New puzzle'
+    layout.inert = !puzzle
+  }
+  worker.onmessage = ({data}) => {
+    reset(data, start)
+    finish()
+  }
+  worker.onerror = () => {
+    finish()
+    byId('message').textContent = 'Generation failed. Select New puzzle to retry.'
+  }
+  worker.postMessage(null)
+}
+byId('new').onclick = () => { unlockAudio(); requestPuzzle(true) }
 byId('restart').onclick = () => { unlockAudio(); reset(puzzle) }
 byId('start').onclick = () => {
   unlockAudio()
@@ -389,6 +416,7 @@ byId('hint').onclick = () => {
 }
 document.addEventListener('pointerdown', unlockAudio)
 document.addEventListener('keydown', event => {
+  if (!grid || byId('new').disabled) return
   const shortcut = shortcuts.get(event.key.toLowerCase())
   if (shortcut && !reason.disabled && !event.ctrlKey && !event.metaKey && !event.altKey &&
       !event.target.matches('select, input:not([type="radio"]), textarea, [contenteditable]')) {
@@ -410,7 +438,7 @@ document.addEventListener('keydown', event => {
   }
 })
 
-if (saved.grid?.length === 81 && saved.removed?.length === 81 && saved.sources?.length === 81 && saved.started) {
+if (puzzle && saved.grid?.length === 81 && saved.removed?.length === 81 && saved.sources?.length === 81 && saved.started) {
   configure(puzzle)
   ;({grid, removed, sources} = saved)
   history = Array.isArray(saved.history) ? saved.history : []
@@ -419,6 +447,8 @@ if (saved.grid?.length === 81 && saved.removed?.length === 81 && saved.sources?.
   selection = new Set([selected])
   if (grid.every(Boolean)) render()
   else settle()
-} else {
+} else if (puzzle) {
   reset(puzzle, false)
+} else {
+  requestPuzzle(false)
 }
