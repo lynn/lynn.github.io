@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f8e5eb">
+<title>autosudoku</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header>
+    <h1>autosudoku</h1>
+    <button id="new" class="primary">New puzzle</button>
+  </header>
+  <div class="layout">
+    <section aria-label="Puzzle">
+      <div id="board" aria-label="Sudoku board"></div>
+    </section>
+    <aside aria-label="Puzzle controls">
+      <button id="start" class="primary">Start puzzle</button>
+      <fieldset id="reason-field" disabled>
+        <legend>Elimination technique</legend>
+        <div class="techniques">
+          <label><input type="radio" name="reason" value="Locked candidates" aria-keyshortcuts="L"><span><span class="shortcut">L</span>ocked candidates</span></label>
+          <label><input type="radio" name="reason" value="Naked pair" aria-keyshortcuts="P"><span>Naked <span class="shortcut">p</span>air</span></label>
+          <label><input type="radio" name="reason" value="Naked triple" aria-keyshortcuts="T"><span>Naked <span class="shortcut">t</span>riple</span></label>
+          <label><input type="radio" name="reason" value="Naked quad" aria-keyshortcuts="Q"><span>Naked <span class="shortcut">q</span>uad</span></label>
+          <label><input type="radio" name="reason" value="Hidden pair" aria-keyshortcuts="H"><span><span class="shortcut">H</span>idden pair</span></label>
+          <label><input type="radio" name="reason" value="Chain" aria-keyshortcuts="C"><span><span class="shortcut">C</span>hain</span></label>
+          <label><input type="radio" name="reason" value="X-Wing" aria-keyshortcuts="X"><span><span class="shortcut">X</span>-Wing</span></label>
+          <label><input type="radio" name="reason" value="Swordfish" aria-keyshortcuts="S"><span><span class="shortcut">S</span>wordfish</span></label>
+        </div>
+      </fieldset>
+      <div id="pad" aria-label="Digit keypad"></div>
+      <div class="actions">
+        <button id="undo" disabled>Undo</button>
+        <button id="hint">Hint</button>
+        <button id="restart">Restart</button>
+      </div>
+      <p id="message" role="status"></p>
+      <ol id="log" class="move-log" role="log" aria-label="Move history"></ol>
+    </aside>
+  </div>
+</main>
+<script type="module" src="app.mjs"></script>
+</body>
+</html>
