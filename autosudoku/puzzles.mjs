@@ -1,13 +1,7 @@
-import {bit, digits, cells, shuffle, search, grade, hardTechniques, candidates, single, deductions} from './logic.mjs'
+import {bit, digits, cells, shuffle, search, grade, hardTechniques, candidates, settleSingles, deductions} from './logic.mjs'
 
 function settle(board, removed) {
-  let masks = candidates(board, removed)
-  let next
-  while ((next = single(masks))) {
-    board[next.i] = next.d
-    masks = candidates(board, removed)
-  }
-  return masks
+  return settleSingles(board, candidates(board, removed))
 }
 
 // Check every possible first deduction after the opening singles. A whole
@@ -70,7 +64,8 @@ export function generatePuzzle(mode = 'normal') {
     const grid = [...solution]
     for (const i of shuffle(cells)) {
       grid[i] = 0
-      if (search(grid).length !== 1) grid[i] = solution[i]
+      // The previous grid was unique. Any second solution must change this clue.
+      if (search(grid, 1, false, i, solution[i]).length) grid[i] = solution[i]
     }
     const result = grade(grid, false, mode)
     if (result.methods.length >= 2 && result.solution?.every((d, i) => d === solution[i])
