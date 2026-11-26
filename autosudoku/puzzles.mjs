@@ -2,7 +2,7 @@ import {cells, shuffle, search, grade, candidates, single, deductions} from './l
 
 // Check every possible first deduction after the opening singles. A whole
 // pattern counts as one move even when it removes several candidates.
-function oneMoveSolves(givens) {
+function oneMoveSolves(givens, mode) {
   const grid = [...givens]
   function settle(board, removed) {
     let masks = candidates(board, removed)
@@ -14,7 +14,7 @@ function oneMoveSolves(givens) {
     return masks
   }
   const masks = settle(grid, [])
-  for (const move of deductions(masks)) {
+  for (const move of deductions(masks, mode)) {
     const removed = []
     for (const [i, mask] of move.cuts) removed[i] = mask
     const branch = [...grid]
@@ -24,7 +24,7 @@ function oneMoveSolves(givens) {
   return false
 }
 
-export function generatePuzzle() {
+export function generatePuzzle(mode = 'normal') {
   for (;;) {
     const [solution] = search(Array(81).fill(0), 1, true)
     const grid = [...solution]
@@ -32,8 +32,13 @@ export function generatePuzzle() {
       grid[i] = 0
       if (search(grid).length !== 1) grid[i] = solution[i]
     }
-    const result = grade(grid)
+    // With no Normal move after the forced singles, every route must use Hard.
+    if (mode === 'hard') {
+      const normal = grade(grid)
+      if (normal.solution || normal.methods.length) continue
+    }
+    const result = grade(grid, false, mode)
     if (result.methods.length >= 2 && result.solution?.every((d, i) => d === solution[i])
-        && !oneMoveSolves(grid)) return grid.join('')
+        && !oneMoveSolves(grid, mode)) return grid.join('')
   }
 }

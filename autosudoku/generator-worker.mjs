@@ -1,3 +1,3 @@
 import {generatePuzzle} from './puzzles.mjs'
 
-self.onmessage = () => self.postMessage(generatePuzzle())
+self.onmessage = ({data}) => self.postMessage(generatePuzzle(data))

@@ -11,7 +11,13 @@
 <main>
   <header>
     <h1>autosudoku</h1>
-    <button id="new" class="primary">New puzzle</button>
+    <div class="puzzle-controls">
+      <select id="mode" aria-label="Puzzle difficulty">
+        <option value="normal">Normal</option>
+        <option value="hard">Hard</option>
+      </select>
+      <button id="new" class="primary">New puzzle</button>
+    </div>
   </header>
   <div class="layout">
     <section aria-label="Puzzle">
@@ -30,6 +36,9 @@
           <label><input type="radio" name="reason" value="Chain" aria-keyshortcuts="C"><span><span class="shortcut">C</span>hain</span></label>
           <label><input type="radio" name="reason" value="X-Wing" aria-keyshortcuts="X"><span><span class="shortcut">X</span>-Wing</span></label>
           <label><input type="radio" name="reason" value="Swordfish" aria-keyshortcuts="S"><span><span class="shortcut">S</span>wordfish</span></label>
+          <label><input type="radio" name="reason" value="Y-Wing" aria-keyshortcuts="Y"><span><span class="shortcut">Y</span>-Wing</span></label>
+          <label><input type="radio" name="reason" value="W-Wing" aria-keyshortcuts="W"><span><span class="shortcut">W</span>-Wing</span></label>
+          <label><input type="radio" name="reason" value="Unique Rectangle" aria-keyshortcuts="U"><span><span class="shortcut">U</span>nique Rectangle</span></label>
         </div>
       </fieldset>
       <div id="pad" aria-label="Digit keypad"></div>

@@ -1,4 +1,4 @@
-import {digits, cells, row, col, bit, candidates, single, deductions} from './logic.mjs'
+import {digits, cells, row, col, bit, candidates, single, deductions, grade, hardTechniques} from './logic.mjs'
 
 const byId = id => document.getElementById(id)
 const board = byId('board')
@@ -15,6 +15,9 @@ const techniqueNotes = {
   'Hidden pair': [76, 71, 64],          // E B E
   'Chain': [57, 62, 67, 72],           // A D G C
   'X-Wing': [60, 67, 65, 74],          // C G F D
+  'Y-Wing': [62, 67, 71],
+  'W-Wing': [62, 65, 69, 74],
+  'Unique Rectangle': [60, 64, 67, 72],
   'Swordfish': [55, 62, 67, 69, 77]    // G D G A F
 }
 const storageKey = 'sudoku-studio-v1'
@@ -29,8 +32,18 @@ let puzzle = typeof saved.puzzle === 'string' && /^[0-9]{81}$/.test(saved.puzzle
   : saved.sources?.length === 81 && saved.grid?.length === 81
     ? saved.grid.map((d, i) => saved.sources[i] === 'given' ? d : 0).join('')
     : undefined
+let mode = saved.mode ?? (puzzle && !grade([...puzzle].map(Number)).solution ? 'hard' : 'normal')
+function showMode() {
+  byId('mode').value = mode
+  for (const input of shortcuts.values()) {
+    input.disabled = mode !== 'hard' && hardTechniques.includes(input.value)
+    input.closest('label').hidden = input.disabled
+  }
+}
+showMode()
 let givens, grid, removed, sources
 let history = []
+let highlightedDigit = 0
 let selected = 0
 let selection = new Set([selected])
 let started = false
@@ -59,7 +72,7 @@ function logMove(message) {
 function save() {
   try {
     localStorage.setItem(storageKey, JSON.stringify({
-      puzzle, grid, removed, sources, history, started, startedAt, finishedAt
+      puzzle, mode, grid, removed, sources, history, started, startedAt, finishedAt
     }))
   } catch {
     // Play remains available when browser storage is disabled.
@@ -177,7 +190,7 @@ function findNextDeduction(masks) {
     lastHintKey = key
     nextDeduction = undefined
     let bestRank = Infinity
-    for (const move of deductions(masks)) {
+    for (const move of deductions(masks, mode)) {
       const priority = hintPriority.indexOf(move.name)
       const rank = move.name === 'Hidden pair' ? hintPriority.length + 1 :
         priority === -1 ? hintPriority.length : priority
@@ -201,7 +214,6 @@ function render() {
   const complete = grid.every(Boolean)
   const reveal = hint && hintStage === 3
   const hintDigit = hint && digits.find(d => hint.cuts[0][1] & bit(d))
-  const matching = grid[selected]
   const counts = Array(10).fill(0)
   for (const value of grid) counts[value]++
   const available = [...selection].reduce((mask, i) => mask | masks[i], 0)
@@ -209,9 +221,9 @@ function render() {
     const tile = tiles[i]
     const value = grid[i]
     const cuts = reveal && (hint.cuts.find(([j]) => j === i)?.[1] & bit(hintDigit))
-    const anchors = reveal && hint.anchors.includes(i) && (masks[i] & hint.anchorMask)
+    const anchors = reveal && hint.anchors.includes(i) && (masks[i] & (hint.anchorMasks?.[i] ?? hint.anchorMask))
     tile.className = ['cell', sources[i],
-      matching && matching === value && 'same', selection.has(i) && 'selected',
+      highlightedDigit && highlightedDigit === value && 'same', selection.has(i) && 'selected',
       i === popping && 'popping'].filter(Boolean).join(' ')
     tile.setAttribute('aria-pressed', String(selection.has(i)))
     tile.tabIndex = i === selected ? 0 : -1
@@ -220,7 +232,7 @@ function render() {
       (value ? ', ' + value + ', ' + sources[i] : ', candidates ' + options.join(', ')))
     const content = value ? '<span class="value' + (counts[value] === 9 ? ' complete-digit' : '') + '">' + value + '</span>' :
       '<span class="notes">' + digits.map(d => '<span class="note' + (cuts & bit(d) ? ' cut' : anchors & bit(d) ? ' anchor' : '') +
-        (d === matching && (masks[i] & bit(d)) ? ' match' : '') +
+        (d === highlightedDigit && (masks[i] & bit(d)) ? ' match' : '') +
         '">' + (masks[i] & bit(d) ? d : '') + '</span>').join('') + '</span>'
     if (tile.innerHTML !== content) tile.innerHTML = content
   }
@@ -297,6 +309,7 @@ function reset(clues, start = true) {
   log.replaceChildren()
   board.classList.remove('victory')
   configure(clues)
+  highlightedDigit = 0
   grid = [...givens]
   removed = cells.map(() => 0)
   sources = givens.map(d => d ? 'given' : '')
@@ -316,6 +329,7 @@ function reset(clues, start = true) {
 }
 
 function select(i, extend = false) {
+  if (grid[i]) highlightedDigit = grid[i]
   if (!extend) {
     selection = new Set([i])
     selected = i
@@ -339,7 +353,7 @@ function enter(d) {
   const method = chosenReason()?.value
   const labels = new Map()
   if (method && targets.length) {
-    for (const move of deductions(masks)) {
+    for (const move of deductions(masks, mode)) {
       if (move.name !== method) continue
       for (const [i, cut] of move.cuts) {
         if ((cut & digitMask) && targets.includes(i) && !labels.has(i)) labels.set(i, moveLabel(move))
@@ -389,6 +403,9 @@ function undo() {
 }
 
 function requestPuzzle(start) {
+  const selector = byId('mode')
+  const requestedMode = selector.value
+  selector.disabled = true
   const button = byId('new')
   button.disabled = true
   button.textContent = 'Generating…'
@@ -397,11 +414,15 @@ function requestPuzzle(start) {
   const worker = new Worker(new URL('./generator-worker.mjs', import.meta.url), {type: 'module'})
   function finish() {
     worker.terminate()
+    selector.disabled = false
+    showMode()
     button.disabled = false
     button.textContent = 'New puzzle'
     layout.inert = !puzzle
   }
   worker.onmessage = ({data}) => {
+    mode = requestedMode
+    lastHintKey = undefined
     reset(data, start)
     finish()
   }
@@ -409,8 +430,9 @@ function requestPuzzle(start) {
     finish()
     byId('message').textContent = 'Generation failed. Select New puzzle to retry.'
   }
-  worker.postMessage(null)
+  worker.postMessage(requestedMode)
 }
+byId('mode').onchange = () => { unlockAudio(); requestPuzzle(true) }
 byId('new').onclick = () => { unlockAudio(); requestPuzzle(true) }
 byId('restart').onclick = () => { unlockAudio(); reset(puzzle) }
 byId('start').onclick = () => {
@@ -436,14 +458,13 @@ byId('hint').onclick = () => {
 document.addEventListener('pointerdown', unlockAudio)
 document.addEventListener('keydown', event => {
   if (!grid || byId('new').disabled) return
+  if (event.target.matches('select, input:not([type="radio"]), textarea, [contenteditable]')) return
   const shortcut = shortcuts.get(event.key.toLowerCase())
-  if (shortcut && !reason.disabled && !event.ctrlKey && !event.metaKey && !event.altKey &&
-      !event.target.matches('select, input:not([type="radio"]), textarea, [contenteditable]')) {
+  if (shortcut && !shortcut.disabled && !reason.disabled && !event.ctrlKey && !event.metaKey && !event.altKey) {
     event.preventDefault()
     shortcut.click()
     return
   }
-  if (event.target.matches('select, input')) return
   const offset = {ArrowUp: -9, ArrowDown: 9, ArrowLeft: -1, ArrowRight: 1}[event.key]
   if (offset && board.contains(document.activeElement)) {
     event.preventDefault()

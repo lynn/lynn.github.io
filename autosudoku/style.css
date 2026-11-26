@@ -15,6 +15,9 @@
 body { margin: 0; }
 main { max-width: 1010px; margin: 0 auto; padding: 42px 28px 28px; }
 header { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin-bottom: 27px; }
+.puzzle-controls { display: flex; flex-wrap: wrap; justify-content: end; gap: 6px; }
+#mode { font: inherit; color: var(--ink); }
+.techniques label[hidden] { display: none; }
 h1 { margin: 0; font-weight: 750; font-size: clamp(2.1rem, 6vw, 4.35rem); letter-spacing: -.065em; line-height: 1; }
 button { font: inherit; color: inherit; }
 button { cursor: pointer; }
