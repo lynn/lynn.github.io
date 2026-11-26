@@ -1,18 +1,19 @@
-import {cells, shuffle, search, grade, candidates, single, deductions} from './logic.mjs'
+import {bit, digits, cells, shuffle, search, grade, hardTechniques, candidates, single, deductions} from './logic.mjs'
+
+function settle(board, removed) {
+  let masks = candidates(board, removed)
+  let next
+  while ((next = single(masks))) {
+    board[next.i] = next.d
+    masks = candidates(board, removed)
+  }
+  return masks
+}
 
 // Check every possible first deduction after the opening singles. A whole
 // pattern counts as one move even when it removes several candidates.
 function oneMoveSolves(givens, mode) {
   const grid = [...givens]
-  function settle(board, removed) {
-    let masks = candidates(board, removed)
-    let next
-    while ((next = single(masks))) {
-      board[next.i] = next.d
-      masks = candidates(board, removed)
-    }
-    return masks
-  }
   const masks = settle(grid, [])
   for (const move of deductions(masks, mode)) {
     const removed = []
@@ -24,6 +25,45 @@ function oneMoveSolves(givens, mode) {
   return false
 }
 
+// Certify that every playable Normal-only route stalls, including partial
+// eliminations and multi-cell selections. Skip expensive puzzles if the
+// search budget runs out before we can certify them.
+function requiresHard(givens) {
+  const seen = new Set()
+  function stalled(grid, removed) {
+    const masks = settle(grid, removed)
+    if (grid.every(Boolean)) return false
+    const key = masks.join(',')
+    if (seen.has(key)) return true
+    if (seen.size >= 128) return false
+    seen.add(key)
+
+    const byTechnique = new Map()
+    for (const move of deductions(masks, 'normal')) {
+      if (!byTechnique.has(move.name)) byTechnique.set(move.name, new Map())
+      const cuts = byTechnique.get(move.name)
+      for (const [i, mask] of move.cuts) cuts.set(i, (cuts.get(i) ?? 0) | mask)
+    }
+    for (const cuts of byTechnique.values()) {
+      for (const d of digits) {
+        const b = bit(d)
+        const targets = [...cuts.keys()].filter(i => cuts.get(i) & b)
+        function selectionsStall(start, marks) {
+          for (let j = start; j < targets.length; j++) {
+            const next = [...marks]
+            next[targets[j]] |= b
+            if (!stalled([...grid], next) || !selectionsStall(j + 1, next)) return false
+          }
+          return true
+        }
+        if (!selectionsStall(0, removed)) return false
+      }
+    }
+    return true
+  }
+  return stalled([...givens], cells.map(() => 0))
+}
+
 export function generatePuzzle(mode = 'normal') {
   for (;;) {
     const [solution] = search(Array(81).fill(0), 1, true)
@@ -32,13 +72,9 @@ export function generatePuzzle(mode = 'normal') {
       grid[i] = 0
       if (search(grid).length !== 1) grid[i] = solution[i]
     }
-    // With no Normal move after the forced singles, every route must use Hard.
-    if (mode === 'hard') {
-      const normal = grade(grid)
-      if (normal.solution || normal.methods.length) continue
-    }
     const result = grade(grid, false, mode)
     if (result.methods.length >= 2 && result.solution?.every((d, i) => d === solution[i])
-        && !oneMoveSolves(grid, mode)) return grid.join('')
+        && (mode !== 'hard' || result.methods.some(name => hardTechniques.includes(name)))
+        && !oneMoveSolves(grid, mode) && (mode !== 'hard' || requiresHard(grid))) return grid.join('')
   }
 }

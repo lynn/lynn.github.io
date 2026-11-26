@@ -43,6 +43,7 @@ function showMode() {
 showMode()
 let givens, grid, removed, sources
 let history = []
+let proofCandidates = new Map()
 let highlightedDigit = 0
 let selected = 0
 let selection = new Set([selected])
@@ -52,7 +53,7 @@ let timer, popping, hint, warning
 let startedAt, finishedAt
 let hintStage = 0
 let audio
-let dragPointer
+let dragPointer, pressedCandidate
 let lastHintKey, nextDeduction
 const hintPriority = ['Naked pair', 'X-Wing', 'Chain']
 const moveLabel = move => move.pattern ? move.name + ' (' + move.pattern + ')' : move.name
@@ -156,11 +157,52 @@ const tiles = cells.map(i => {
   return button
 })
 
+const svgNS = 'http://www.w3.org/2000/svg'
+const links = document.createElementNS(svgNS, 'svg')
+links.setAttribute('class', 'chain-links')
+links.setAttribute('viewBox', '0 0 9 9')
+links.setAttribute('preserveAspectRatio', 'none')
+links.setAttribute('aria-hidden', 'true')
+board.append(links)
+
+function clearProof() {
+  proofCandidates.clear()
+  links.replaceChildren()
+}
+
+function showProof(moves, masks, digit) {
+  clearProof()
+  for (const move of new Set(moves)) {
+    if (move.name.startsWith('Naked ') || move.name === 'X-Wing' || hardTechniques.includes(move.name)) {
+      for (const i of move.anchors) {
+        const support = masks[i] & (move.anchorMasks?.[i] ?? move.anchorMask)
+        proofCandidates.set(i, (proofCandidates.get(i) ?? 0) | support)
+      }
+    } else if (move.name === 'Chain') {
+      // Candidate positions follow the 3-by-3 notes grid inside each cell.
+      const dx = .5 + ((digit - 1) % 3 - 1) * .91 / 3
+      const dy = .5 + (Math.floor((digit - 1) / 3) - 1) * .91 / 3
+      for (let j = 1; j < move.anchors.length; j++) {
+        const a = move.anchors[j - 1], b = move.anchors[j]
+        const line = document.createElementNS(svgNS, 'line')
+        line.setAttribute('class', j === 2 ? 'weak' : 'strong')
+        line.setAttribute('x1', col(a) + dx)
+        line.setAttribute('y1', row(a) + dy)
+        line.setAttribute('x2', col(b) + dx)
+        line.setAttribute('y2', row(b) + dy)
+        links.append(line)
+      }
+    }
+  }
+}
+
 board.addEventListener('pointerdown', event => {
   if (event.button !== 0 || dragPointer !== undefined) return
   const i = tiles.indexOf(event.target.closest('.cell'))
   if (i === -1) return
   event.preventDefault()
+  pressedCandidate = !event.shiftKey && selection.size === 1 && selected === i
+    ? event.target.closest('.note') : null
   dragPointer = event.pointerId
   board.setPointerCapture(dragPointer)
   select(i, event.shiftKey)
@@ -173,8 +215,17 @@ board.addEventListener('pointermove', event => {
   select(i, true)
   tiles[selected].focus({preventScroll: true})
 })
+board.addEventListener('pointerup', event => {
+  if (event.pointerId !== dragPointer || selection.size !== 1 || !pressedCandidate?.textContent) return
+  if (document.elementFromPoint(event.clientX, event.clientY) !== pressedCandidate) return
+  if (highlightedDigit !== Number(pressedCandidate.textContent)) clearProof()
+  highlightedDigit = Number(pressedCandidate.textContent)
+  render()
+})
 board.addEventListener('lostpointercapture', event => {
-  if (event.pointerId === dragPointer) dragPointer = undefined
+  if (event.pointerId === dragPointer) {
+    dragPointer = pressedCandidate = undefined
+  }
 })
 const pad = digits.map(d => {
   const button = document.createElement('button')
@@ -221,7 +272,7 @@ function render() {
     const tile = tiles[i]
     const value = grid[i]
     const cuts = reveal && (hint.cuts.find(([j]) => j === i)?.[1] & bit(hintDigit))
-    const anchors = reveal && hint.anchors.includes(i) && (masks[i] & (hint.anchorMasks?.[i] ?? hint.anchorMask))
+    const anchors = masks[i] & (proofCandidates.get(i) || (reveal && hint.anchors.includes(i) && (hint.anchorMasks?.[i] ?? hint.anchorMask)))
     tile.className = ['cell', sources[i],
       highlightedDigit && highlightedDigit === value && 'same', selection.has(i) && 'selected',
       i === popping && 'popping'].filter(Boolean).join(' ')
@@ -308,6 +359,7 @@ function reset(clues, start = true) {
   clearTimeout(timer)
   log.replaceChildren()
   board.classList.remove('victory')
+  clearProof()
   configure(clues)
   highlightedDigit = 0
   grid = [...givens]
@@ -329,6 +381,7 @@ function reset(clues, start = true) {
 }
 
 function select(i, extend = false) {
+  if (selection.size !== 1 || selected !== i || (grid[i] && grid[i] !== highlightedDigit)) clearProof()
   if (grid[i]) highlightedDigit = grid[i]
   if (!extend) {
     selection = new Set([i])
@@ -351,17 +404,17 @@ function enter(d) {
   const digitMask = bit(d)
   const targets = [...selection].filter(i => masks[i] & digitMask)
   const method = chosenReason()?.value
-  const labels = new Map()
+  const moves = new Map()
   if (method && targets.length) {
     for (const move of deductions(masks, mode)) {
       if (move.name !== method) continue
       for (const [i, cut] of move.cuts) {
-        if ((cut & digitMask) && targets.includes(i) && !labels.has(i)) labels.set(i, moveLabel(move))
+        if ((cut & digitMask) && targets.includes(i) && !moves.has(i)) moves.set(i, move)
       }
-      if (labels.size === targets.length) break
+      if (moves.size === targets.length) break
     }
   }
-  const invalid = targets.find(i => !labels.has(i))
+  const invalid = targets.find(i => !moves.has(i))
   if (!targets.length || !method || invalid !== undefined) {
     warning = !targets.length ? 'No selected cell has ' + d + ' as a candidate.' :
       !method ? 'Choose a reason before removing a candidate.' :
@@ -372,8 +425,9 @@ function enter(d) {
   }
   history.push({grid: [...grid], removed: [...removed], sources: [...sources], selected, selection: [...selection]})
   for (const i of targets) removed[i] |= digitMask
-  for (const label of new Set(labels.values())) {
-    const coordinates = targets.filter(i => labels.get(i) === label)
+  showProof(moves.values(), masks, d)
+  for (const label of new Set([...moves.values()].map(moveLabel))) {
+    const coordinates = targets.filter(i => moveLabel(moves.get(i)) === label)
       .map(i => 'R' + (row(i) + 1) + 'C' + (col(i) + 1)).join(', ')
     logMove('Eliminated ' + d + ' from ' + coordinates + ' using ' + label + '.')
   }
@@ -395,6 +449,7 @@ function undo() {
   finishedAt = undefined
   ;({grid, removed, sources, selected} = previous)
   selection = new Set(previous.selection ?? [selected])
+  clearProof()
   logMove('Undid last elimination.')
   busy = false
   popping = hint = warning = undefined
@@ -444,12 +499,14 @@ byId('start').onclick = () => {
 }
 byId('undo').onclick = undo
 reason.onchange = () => {
+  clearProof()
   unlockAudio()
   playNotes([81], 0, .055, .026)
   warning = undefined
   render()
 }
 byId('hint').onclick = () => {
+  clearProof()
   hintStage = hint ? Math.min(3, hintStage + 1) : 1
   hint = findNextDeduction(candidates(grid, removed))
   warning = hint ? undefined : 'No supported deduction found.'
